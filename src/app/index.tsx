@@ -1,7 +1,7 @@
-import { Stack } from 'expo-router';
+import { Link, Stack } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { fonts, space, usePalette } from '@/ui/theme';
+import { fonts, palettes, space, usePalette } from '@/ui/theme';
 
 // Roster: will become a grid of hero cards once characters exist (M4).
 export default function RosterScreen() {
@@ -26,6 +26,11 @@ export default function RosterScreen() {
           </Pressable>
         </View>
       </View>
+      {__DEV__ ? (
+        <Link href="/dev/gallery" style={[styles.devLink, { color: palettes.dark.inkMuted }]}>
+          Component gallery (dev)
+        </Link>
+      ) : null}
     </View>
   );
 }
@@ -44,4 +49,5 @@ const styles = StyleSheet.create({
   body: { fontFamily: fonts.body, fontSize: 16, textAlign: 'center' },
   button: { marginTop: space.sm, paddingVertical: space.md, paddingHorizontal: space.xl, borderRadius: 4, minHeight: 44 },
   buttonText: { fontFamily: fonts.bodyBold, fontSize: 16, letterSpacing: 0.5 },
+  devLink: { marginTop: space.xl, textAlign: 'center', fontFamily: fonts.body, textDecorationLine: 'underline' },
 });
