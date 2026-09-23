@@ -41,3 +41,11 @@ example
 # generated native folders
 /ios
 /android
+
+# art pipeline
+.env
+art/raw/
+art/bakeoff/*.png
+art/*.log
+art/*-sheet.jpg
+art/review.html
