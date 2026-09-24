@@ -36,6 +36,8 @@ export type ChoiceOption = {
   items?: { id: string; count: number }[];
   /** Further picks unlocked by this option, e.g. "any martial weapon". */
   subChoices?: Choice[];
+  /** Proficiencies (item or proficiency ids) required to take this option, e.g. "a warhammer (if proficient)". */
+  requires?: string[];
 };
 
 export type Choice = {
@@ -119,14 +121,23 @@ function equipmentChoice(id: string, srd: SrdChoice): Choice {
   const toOption = (o: SrdOption, i: number): ChoiceOption => {
     const items: { id: string; count: number }[] = [];
     const subChoices: Choice[] = [];
+    const requires: string[] = [];
     const visit = (x: SrdOption, path: string) => {
-      if (x.kind === 'counted') items.push({ id: x.id, count: x.count });
+      if (x.kind === 'counted') {
+        items.push({ id: x.id, count: x.count });
+        x.prerequisites?.forEach((p) => p.proficiency && requires.push(p.proficiency));
+      }
       else if (x.kind === 'ref') items.push({ id: x.id, count: 1 });
       else if (x.kind === 'multiple') x.items.forEach((y, j) => visit(y, `${path}.${j}`));
       else if (x.kind === 'choice') subChoices.push(fromSrd(`${id}:${path}`, x.choice, 'equipment', 'itemCard', 1));
     };
     visit(o, String(i));
-    return { id: String(i), items, subChoices: subChoices.length ? subChoices : undefined };
+    return {
+      id: String(i),
+      items,
+      subChoices: subChoices.length ? subChoices : undefined,
+      requires: requires.length ? requires : undefined,
+    };
   };
   const options = srd.from.options.map(toOption);
   return { id, step: 'equipment', view: 'itemCard', level: 1, label: srd.desc ?? 'Starting equipment', count: 1, options };
@@ -214,6 +225,17 @@ export function allChoices(character: Character, opts: Opts = {}): Choice[] {
         const srd = fs[field];
         if (srd) out.push(fromSrd(`feature:${featureId}:${field}`, srd, field === 'expertiseOptions' ? 'skills' : 'class', field === 'expertiseOptions' ? 'tile' : 'artCard', level, feature.name));
       }
+    }
+    if (featureIds.includes('bonus-proficiencies')) {
+      out.push({
+        id: 'feature:bonus-proficiencies:skills',
+        step: 'skills',
+        view: 'tile',
+        level,
+        label: 'Bonus Proficiencies: any three skills',
+        count: 3,
+        options: content.skills.all.map((s) => ({ id: `skill-${s.index}` })),
+      });
     }
     const asiTotal = row.abilityScoreBonuses ?? 0;
     if (asiTotal > previousAsi) {

@@ -1,7 +1,9 @@
 import { View } from 'react-native';
 
+import { content } from '@/content';
 import { useCreator, type StepId } from '@/creator/useCreator';
 import type { Choice } from '@/rules/choices';
+import { isProficient } from '@/rules/derive';
 import { ChoicePicker } from '@/ui/ChoicePicker';
 import { space } from '@/ui/theme';
 
@@ -10,7 +12,7 @@ import { space } from '@/ui/theme';
  * the draft itself rather than in `choices`, so they are mapped here.
  */
 export function StepChoices({ step, filter, locked }: { step: StepId; filter?: (c: Choice) => boolean; locked?: Set<string> }) {
-  const { draft, stepChoices, setChoice, set, color } = useCreator();
+  const { draft, sheet, stepChoices, setChoice, set, color } = useCreator();
   const list = stepChoices(step).filter(filter ?? (() => true));
   if (!list.length) return null;
 
@@ -25,10 +27,23 @@ export function StepChoices({ step, filter, locked }: { step: StepId; filter?: (
     else setChoice(id, v);
   };
 
+  // Languages the race already grants are shown as known rather than offered again.
+  const race = draft.race ? content.races.find(draft.race) : undefined;
+  const allLocked = new Set([...(locked ?? []), ...(race?.languages ?? [])]);
+  const proficient = sheet ? (id: string) => isProficient(sheet.proficiencies, id) : undefined;
+
   return (
     <View style={{ gap: space.xxl }}>
       {list.map((choice) => (
-        <ChoicePicker key={choice.id} choice={choice} choices={values} onChange={onChange} color={color} locked={locked} />
+        <ChoicePicker
+          key={choice.id}
+          choice={choice}
+          choices={values}
+          onChange={onChange}
+          color={color}
+          locked={allLocked}
+          isProficient={proficient}
+        />
       ))}
     </View>
   );

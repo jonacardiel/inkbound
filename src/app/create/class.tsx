@@ -1,8 +1,10 @@
-import { Text } from 'react-native';
+import { router } from 'expo-router';
+import { Pressable, Text } from 'react-native';
 
 import { content } from '@/content';
 import { classMeta } from '@/content/meta/classes';
 import { PickFromCarousel } from '@/creator/PickFromCarousel';
+import { quickBuild } from '@/creator/quickBuild';
 import { StepChoices } from '@/creator/StepChoices';
 import { StepScreen } from '@/creator/StepScreen';
 import { useCreator } from '@/creator/useCreator';
@@ -10,7 +12,7 @@ import { ClassCard } from '@/ui/cards/ClassCard';
 import { fonts, palettes } from '@/ui/theme';
 
 export default function ClassStep() {
-  const { draft, setClass, color } = useCreator();
+  const { draft, setClass, set, color } = useCreator();
   const race = draft.race ? content.races.find(draft.race) : undefined;
   const cls = draft.classId ? content.classes.find(draft.classId) : undefined;
   // "Pairs with your race" when the race boosts the class's primary ability.
@@ -38,6 +40,27 @@ export default function ClassStep() {
         </Text>
       ) : null}
       <StepChoices step="class" />
+      {draft.race && draft.classId ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityHint="Fills in ability scores, skills, gear and spells with recommended picks"
+          onPress={() => {
+            set(quickBuild(draft));
+            router.push('/create/details');
+          }}
+          style={({ pressed }) => ({
+            minHeight: 48,
+            borderRadius: 6,
+            borderWidth: 1.5,
+            borderColor: color,
+            borderStyle: 'dashed',
+            alignItems: 'center',
+            justifyContent: 'center',
+            opacity: pressed ? 0.7 : 1,
+          })}>
+          <Text style={{ fontFamily: fonts.bodyBold, fontSize: 15, color }}>Quick Build: fill in the rest for me</Text>
+        </Pressable>
+      ) : null}
     </StepScreen>
   );
 }

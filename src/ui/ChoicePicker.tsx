@@ -16,6 +16,8 @@ type Props = {
   color: string;
   /** Options the character already has from elsewhere (shown locked, e.g. a skill from race). */
   locked?: Set<string>;
+  /** Proficiency check for gated options like "a warhammer (if proficient)". */
+  isProficient?: (id: string) => boolean;
 };
 
 /**
@@ -23,7 +25,7 @@ type Props = {
  * bundles ("(a) chain mail or (b) leather armor, longbow...") get A-vs-B cards
  * that reveal their own sub-picks.
  */
-export function ChoicePicker({ choice, choices, onChange, color, locked }: Props) {
+export function ChoicePicker({ choice, choices, onChange, color, locked, isProficient }: Props) {
   const selected = choices[choice.id] ?? [];
   const remaining = choice.count - selected.length;
   const isBundle = choice.options.some((o) => o.items || o.subChoices);
@@ -51,6 +53,7 @@ export function ChoicePicker({ choice, choices, onChange, color, locked }: Props
               letter={String.fromCharCode(97 + i)}
               option={option}
               selected={selected.includes(option.id)}
+              unavailable={Boolean(isProficient && option.requires?.some((r) => !isProficient(r)))}
               onPress={() => toggle(option.id)}
               choices={choices}
               onChange={onChange}
@@ -175,6 +178,7 @@ function Bundle({
   letter,
   option,
   selected,
+  unavailable,
   onPress,
   choices,
   onChange,
@@ -183,6 +187,7 @@ function Bundle({
   letter: string;
   option: ChoiceOption;
   selected: boolean;
+  unavailable: boolean;
   onPress: () => void;
   choices: Record<string, string[]>;
   onChange: (id: string, values: string[]) => void;
@@ -195,17 +200,21 @@ function Bundle({
   ].join(' + ');
 
   return (
-    <View style={[styles.bundle, { borderColor: selected ? color : palettes.dark.rule, borderWidth: selected ? 2 : 1 }]}>
+    <View style={[styles.bundle, { borderColor: selected ? color : palettes.dark.rule, borderWidth: selected ? 2 : 1, opacity: unavailable ? 0.45 : 1 }]}>
       <Pressable
         onPress={onPress}
+        disabled={unavailable}
         accessibilityRole="radio"
-        accessibilityState={{ checked: selected }}
-        accessibilityLabel={`Option ${letter}: ${summary}`}
+        accessibilityState={{ checked: selected, disabled: unavailable }}
+        accessibilityLabel={`Option ${letter}: ${summary}${unavailable ? ', requires a proficiency you do not have' : ''}`}
         style={styles.bundleHead}>
         <View style={[styles.letter, { borderColor: color, backgroundColor: selected ? color : 'transparent' }]}>
           <Text style={[styles.letterText, { color: selected ? palettes.dark.table : color }]}>{letter}</Text>
         </View>
-        <Text style={[styles.optionName, { flex: 1 }]}>{summary}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.optionName}>{summary}</Text>
+          {unavailable ? <Text style={styles.meta}>{"Requires proficiency you don't have"}</Text> : null}
+        </View>
       </Pressable>
       {items.length ? (
         <View style={styles.bundleItems}>

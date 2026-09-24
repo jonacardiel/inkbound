@@ -58,6 +58,25 @@ const WEAPON_PROFICIENCY: Record<string, string> = {
   'crossbow-hand': 'hand-crossbows',
 };
 
+/**
+ * Whether a proficiency set covers an item or proficiency id: directly, via
+ * its armor category, or via its weapon category / plural weapon proficiency.
+ */
+export function isProficient(proficiencies: Set<string>, id: string): boolean {
+  if (proficiencies.has(id)) return true;
+  const item = content.equipment.find(id);
+  if (!item) return false;
+  if (item.armorCategory) {
+    const category = item.armorCategory === 'Shield' ? 'shields' : `${item.armorCategory.toLowerCase()}-armor`;
+    return proficiencies.has(category) || proficiencies.has('all-armor');
+  }
+  if (item.weaponCategory) {
+    const category = item.weaponCategory === 'Martial' ? 'martial-weapons' : 'simple-weapons';
+    return proficiencies.has(category) || proficiencies.has(WEAPON_PROFICIENCY[id] ?? `${id}s`);
+  }
+  return false;
+}
+
 export function derive(character: Character): Sheet {
   const entry = character.classes[0];
   if (!entry) throw new Error('Character has no class');
@@ -104,7 +123,9 @@ export function derive(character: Character): Sheet {
     ...cls.proficiencies,
     ...[...traits].flatMap((t) => content.traits.find(t)?.proficiencies ?? []),
     ...(background?.startingProficiencies ?? []),
-    ...chosen((k) => k.includes('proficiencyChoices')),
+    ...chosen((k) => k.includes('proficiencyChoices') || k === 'feature:bonus-proficiencies:skills'),
+    // Life domain: "you gain proficiency with heavy armor".
+    ...(has('bonus-proficiency') ? ['heavy-armor'] : []),
   ]);
   const expertise = new Set(chosen((k) => k.includes('expertiseOptions')));
   const jackOfAllTrades = has('jack-of-all-trades');
@@ -176,8 +197,7 @@ export function derive(character: Character): Sheet {
     const props = new Set(w.properties ?? []);
     const ranged = w.weaponRange === 'Ranged';
     const ability: Ability = ranged ? 'dex' : props.has('finesse') && mods.dex > mods.str ? 'dex' : 'str';
-    const category = w.weaponCategory === 'Martial' ? 'martial-weapons' : 'simple-weapons';
-    const proficient = proficiencies.has(category) || proficiencies.has(WEAPON_PROFICIENCY[w.index] ?? `${w.index}s`);
+    const proficient = isProficient(proficiencies, w.index);
     let damageMod = mods[ability];
     let toHit = mods[ability] + (proficient ? profBonus : 0);
     if (ranged && fightingStyle('archery')) toHit += 2;

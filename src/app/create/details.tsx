@@ -4,6 +4,7 @@ import { content } from '@/content';
 import { StepScreen } from '@/creator/StepScreen';
 import { useCreator } from '@/creator/useCreator';
 import type { Bio } from '@/rules/character';
+import { PortraitPicker } from '@/ui/Portrait';
 import { fonts, palettes, space } from '@/ui/theme';
 
 const ALIGNMENT_GRID = [
@@ -38,6 +39,13 @@ export default function DetailsStep() {
           accessibilityLabel="Character name"
         />
       </View>
+
+      {draft.race ? (
+        <View style={{ gap: space.sm }}>
+          <Text style={styles.label}>Portrait</Text>
+          <PortraitPicker race={draft.race} value={draft.portrait} onChange={(portrait) => set({ portrait })} color={color} />
+        </View>
+      ) : null}
 
       <View style={{ gap: space.sm }}>
         <Text style={styles.label}>Alignment</Text>
