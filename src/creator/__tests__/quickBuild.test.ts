@@ -1,3 +1,7 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+import { content } from '@/content';
 import { emptyBio } from '@/rules/character';
 import { pendingChoices } from '@/rules/choices';
 import { withStartingGear } from '@/rules/creation';
@@ -57,9 +61,8 @@ test('Wizard gets a beginner-friendly spellbook', () => {
 });
 
 test('recommended spells are all SRD spells', () => {
-  const src = require('fs').readFileSync(require('path').join(__dirname, '../quickBuild.ts'), 'utf8') as string;
+  const src = readFileSync(join(__dirname, '../quickBuild.ts'), 'utf8');
   const block = src.slice(src.indexOf('RECOMMENDED_SPELLS'), src.indexOf('};', src.indexOf('RECOMMENDED_SPELLS')));
   const ids = [...block.matchAll(/'([a-z-]+)'/g)].map((m) => m[1]);
-  const { content } = require('@/content');
   expect(ids.filter((id) => !content.spells.find(id))).toEqual([]);
 });
