@@ -1,3 +1,4 @@
+import { View } from 'react-native';
 import Svg, { Line, Polygon, Text as SvgText } from 'react-native-svg';
 
 /**
@@ -21,16 +22,19 @@ export function D20Icon({ size = 36, ink = '#16120F' }: { size?: number; ink?: s
     [br, [90, 74]],
     [br, [50, 97]],
   ];
+  // Decorative: hidden from screen readers on the wrapper (the Svg element would pass the prop to the DOM on web).
   return (
-    <Svg width={size} height={size} viewBox="0 0 100 102" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-      <Polygon points={hex} fill="none" stroke={ink} strokeWidth={6} strokeLinejoin="round" />
-      <Polygon points={`${a} ${bl} ${br}`} fill="none" stroke={ink} strokeWidth={5} strokeLinejoin="round" />
-      {facets.map(([from, to], i) => (
-        <Line key={i} x1={from[0]} y1={from[1]} x2={to[0]} y2={to[1]} stroke={ink} strokeWidth={4} strokeLinecap="round" />
-      ))}
-      <SvgText x={50} y={62} fontSize={22} fontWeight="bold" fill={ink} textAnchor="middle">
-        20
-      </SvgText>
-    </Svg>
+    <View aria-hidden>
+      <Svg width={size} height={size} viewBox="0 0 100 102">
+        <Polygon points={hex} fill="none" stroke={ink} strokeWidth={6} strokeLinejoin="round" />
+        <Polygon points={`${a} ${bl} ${br}`} fill="none" stroke={ink} strokeWidth={5} strokeLinejoin="round" />
+        {facets.map(([from, to], i) => (
+          <Line key={i} x1={from[0]} y1={from[1]} x2={to[0]} y2={to[1]} stroke={ink} strokeWidth={4} strokeLinecap="round" />
+        ))}
+        <SvgText x={50} y={62} fontSize={22} fontWeight="bold" fill={ink} textAnchor="middle">
+          20
+        </SvgText>
+      </Svg>
+    </View>
   );
 }
