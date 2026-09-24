@@ -8,19 +8,21 @@ type Props = {
   label: string;
   /** Tapping a filled pip spends one; tapping a hollow pip restores one. */
   onChange?: (spent: number) => void;
+  /** Screen-reader summary; defaults to "N of M available". */
+  summary?: string;
 };
 
 /**
  * A row of pips for spell slots and limited-use resources. Filled = available.
  * Large pools (over 12, e.g. Lay on Hands) should use a number instead.
  */
-export function Pips({ max, spent, color, label, onChange }: Props) {
+export function Pips({ max, spent, color, label, onChange, summary }: Props) {
   const available = max - spent;
   return (
     <View
       style={styles.row}
       accessible={!onChange}
-      accessibilityLabel={`${label}: ${available} of ${max} available`}>
+      accessibilityLabel={summary ?? `${label}: ${available} of ${max} available`}>
       {Array.from({ length: max }, (_, i) => {
         const filled = i < available;
         return (

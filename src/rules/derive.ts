@@ -2,6 +2,7 @@
 import { ABILITIES, classLevel, content, subclassLevel, type Ability, type Equipment, type Level } from '@/content';
 
 import type { Character } from './character';
+import { ITEM_EFFECTS, type ItemEffect } from './magicItems';
 import { resourcesFor, type Resource } from './resources';
 
 export type AbilityLine = { score: number; mod: number; save: number; saveProficient: boolean };
@@ -108,12 +109,19 @@ export function derive(character: Character): Sheet {
   for (const a of chosen((k) => k.endsWith(':abilityBonusOptions'))) scores[a as Ability] += 1;
   for (const a of chosen((k) => k.startsWith('asi:'))) if (a in scores) scores[a as Ability] += 1;
   for (const a of ABILITIES) scores[a] = Math.min(scores[a], 20);
+  const itemEffects: ItemEffect[] = character.inventory
+    .filter((i) => i.attuned && i.itemId && ITEM_EFFECTS[i.itemId])
+    .map((i) => ITEM_EFFECTS[i.itemId!]);
+  for (const e of itemEffects) {
+    if (e.setScore) scores[e.setScore.ability] = Math.max(scores[e.setScore.ability], e.setScore.value);
+  }
+  const itemSaveBonus = itemEffects.reduce((n, e) => n + (e.saves ?? 0), 0);
   const mods = Object.fromEntries(ABILITIES.map((a) => [a, modOf(scores[a])])) as Record<Ability, number>;
 
   const abilities = Object.fromEntries(
     ABILITIES.map((a) => {
       const saveProficient = cls.savingThrows.includes(a);
-      return [a, { score: scores[a], mod: mods[a], saveProficient, save: mods[a] + (saveProficient ? profBonus : 0) }];
+      return [a, { score: scores[a], mod: mods[a], saveProficient, save: mods[a] + (saveProficient ? profBonus : 0) + itemSaveBonus }];
     }),
   ) as Record<Ability, AbilityLine>;
 
@@ -175,6 +183,9 @@ export function derive(character: Character): Sheet {
     ac = Math.max(...options);
   }
   if (shield) ac += 2;
+  for (const e of itemEffects) {
+    if (e.ac && (!e.unarmoredOnly || (!armor && !shield))) ac += e.ac;
+  }
 
   // --- Speed ----------------------------------------------------------------------
   let speed = race.speed;

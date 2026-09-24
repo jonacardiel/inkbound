@@ -41,6 +41,7 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: palette.table },
         }}>
         <Stack.Screen name="create" options={{ headerShown: false }} />
+        <Stack.Screen name="character/[id]" options={{ headerShown: false }} />
       </Stack>
     </GestureHandlerRootView>
   );

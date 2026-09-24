@@ -114,3 +114,68 @@ export function levelUp(c: Character, hpRoll?: number): Character {
   hpRolls[entry.level - 1] = hpRoll ?? derive(c).hitDie / 2 + 1;
   return { ...c, hpRolls, classes: [{ ...entry, level: entry.level + 1 }] };
 }
+
+// --- Death saves, conditions and other toggles ---------------------------------
+
+export type DeathSaveOutcome = 'ongoing' | 'stable' | 'dead' | 'revived';
+
+/**
+ * Records a death saving throw roll (d20, no modifiers). 10+ succeeds, a
+ * natural 1 counts as two failures, and a natural 20 revives with 1 HP.
+ */
+export function deathSave(c: Character, d20: number): { character: Character; outcome: DeathSaveOutcome } {
+  if (d20 === 20) {
+    const sheet = derive(c);
+    return { character: withPlay(c, { damage: sheet.maxHp - 1, deathSaves: { successes: 0, failures: 0 } }), outcome: 'revived' };
+  }
+  const { successes, failures } = c.play.deathSaves;
+  const next = d20 === 1 ? { successes, failures: failures + 2 } : d20 >= 10 ? { successes: successes + 1, failures } : { successes, failures: failures + 1 };
+  const outcome: DeathSaveOutcome = next.failures >= 3 ? 'dead' : next.successes >= 3 ? 'stable' : 'ongoing';
+  return { character: withPlay(c, { deathSaves: { successes: Math.min(3, next.successes), failures: Math.min(3, next.failures) } }), outcome };
+}
+
+export function toggleCondition(c: Character, condition: string): Character {
+  const has = c.play.conditions.includes(condition);
+  return withPlay(c, { conditions: has ? c.play.conditions.filter((x) => x !== condition) : [...c.play.conditions, condition] });
+}
+
+export function setExhaustion(c: Character, level: number): Character {
+  return withPlay(c, { exhaustion: Math.max(0, Math.min(6, level)) });
+}
+
+export function setConcentration(c: Character, spellId?: string): Character {
+  return withPlay(c, { concentration: spellId });
+}
+
+export function togglePrepared(c: Character, spellId: string): Character {
+  const has = c.play.preparedSpells.includes(spellId);
+  return withPlay(c, { preparedSpells: has ? c.play.preparedSpells.filter((s) => s !== spellId) : [...c.play.preparedSpells, spellId] });
+}
+
+// --- Inventory --------------------------------------------------------------------
+
+export const MAX_ATTUNED = 3;
+
+export function updateItem(c: Character, index: number, change: Partial<Character['inventory'][number]>): Character {
+  if (change.attuned && !c.inventory[index].attuned && c.inventory.filter((i) => i.attuned).length >= MAX_ATTUNED) {
+    throw new Error(`You can attune to at most ${MAX_ATTUNED} items`);
+  }
+  const inventory = c.inventory.map((item, i) => (i === index ? { ...item, ...change } : item)).filter((i) => i.qty > 0);
+  return { ...c, inventory };
+}
+
+export function addItem(c: Character, item: Character['inventory'][number]): Character {
+  const existing = item.itemId ? c.inventory.findIndex((i) => i.itemId === item.itemId && !i.custom) : -1;
+  if (existing >= 0) return updateItem(c, existing, { qty: c.inventory[existing].qty + item.qty });
+  return { ...c, inventory: [...c.inventory, item] };
+}
+
+export function setCurrency(c: Character, coin: keyof Character['currency'], amount: number): Character {
+  return { ...c, currency: { ...c.currency, [coin]: Math.max(0, Math.floor(amount)) } };
+}
+
+/** Starts or ends a rage. Starting one spends a use of the Rage resource. */
+export function toggleRage(c: Character): Character {
+  if (c.play.raging) return withPlay(c, { raging: false });
+  return withPlay(spendResource(c, 'rage'), { raging: true });
+}

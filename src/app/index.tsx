@@ -1,4 +1,4 @@
-import { Link, router, Stack } from 'expo-router';
+import { Link, router, Stack, type Href } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 import { content } from '@/content';
@@ -46,7 +46,12 @@ export default function RosterScreen() {
               const race = c.subrace ? content.subraces.get(c.subrace) : content.races.get(c.race);
               const sheet = derive(c);
               return (
-                <View key={c.id} accessible accessibilityLabel={`${c.name}, level ${entry.level} ${race.name} ${cls.name}`}>
+                <Pressable
+                  key={c.id}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${c.name}, level ${entry.level} ${race.name} ${cls.name}. Opens the character sheet.`}
+                  onPress={() => router.push(`/character/${c.id}` as Href)}
+                  style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}>
                   <ArtCard
                     kind="classes"
                     id={cls.index}
@@ -56,7 +61,7 @@ export default function RosterScreen() {
                     color={classColors[cls.index]}
                     width={cardWidth}
                   />
-                </View>
+                </Pressable>
               );
             })}
           </View>
