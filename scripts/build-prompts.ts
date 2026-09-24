@@ -140,6 +140,19 @@ for (const trait of content.traits.all.filter((t) => t.parent === 'draconic-ance
   });
 }
 
+// App icon: must read at launcher size and survive Android's circular mask, so the
+// subject sits in the middle 60% with plain paper around it.
+add({
+  id: 'app-icon',
+  kind: 'sigils',
+  tier: 2,
+  aspect: '1:1',
+  prompt: itemPrompt(
+    'twenty-sided die resting on an open leather-bound tome with a quill pen beside it, the whole group small and centered with wide empty margins of plain paper on every side, bold simple shapes that read clearly at tiny sizes',
+    { colorName: 'warm gold', element: 'the edges of the die' },
+  ),
+});
+
 // --- Tier 3: remaining gear and magic-item category art ---------------------------------------
 for (const item of content.equipment.all.filter((e) => !isStartingGear(e) && e.equipmentCategory !== 'mounts-and-vehicles')) {
   add({ id: item.index, kind: 'items', tier: 3, aspect: '1:1', prompt: itemPrompt(item.name.toLowerCase()) });

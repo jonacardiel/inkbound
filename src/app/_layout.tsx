@@ -10,9 +10,11 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { registerOffline } from '@/state/offline';
 import { fonts, usePalette } from '@/ui/theme';
 
 SplashScreen.preventAutoHideAsync();
+registerOffline();
 
 export default function RootLayout() {
   const palette = usePalette();

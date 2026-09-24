@@ -1113,6 +1113,13 @@
     "prompt": "A single white dragon's head rearing with open jaws shown alone and centered, in three-quarter view. It is drawn as a bold 19th-century wood engraving in the manner of Gustave Doré, with fewer, heavier hatching lines and a simple, instantly readable silhouette. Black ink on warm aged paper inside a soft oval vignette. Monochrome except for a white dragon color glow on the breath pouring from the jaws. The object fills most of the frame. The page is clean and unmarked apart from the object itself: it is purely pictorial, with no writing of any kind anywhere, no signature, no caption, no title and no labels."
   },
   {
+    "id": "app-icon",
+    "kind": "sigils",
+    "tier": 2,
+    "aspect": "1:1",
+    "prompt": "A single twenty-sided die resting on an open leather-bound tome with a quill pen beside it, the whole group small and centered with wide empty margins of plain paper on every side, bold simple shapes that read clearly at tiny sizes shown alone and centered, in three-quarter view. It is drawn as a bold 19th-century wood engraving in the manner of Gustave Doré, with fewer, heavier hatching lines and a simple, instantly readable silhouette. Black ink on warm aged paper inside a soft oval vignette. Monochrome except for a warm gold glow on the edges of the die. The object fills most of the frame. The page is clean and unmarked apart from the object itself: it is purely pictorial, with no writing of any kind anywhere, no signature, no caption, no title and no labels."
+  },
+  {
     "id": "abacus",
     "kind": "items",
     "tier": 3,

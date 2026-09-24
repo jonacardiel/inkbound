@@ -29,7 +29,7 @@ export function RollStage({ color }: { color: string }) {
   return (
     <StageBoundary key={staged.at} onFail={finishStage}>
       <WithSkiaWeb
-        opts={{ locateFile: (file) => `/${file}` }}
+        opts={{ locateFile: (file) => `${process.env.EXPO_PUBLIC_BASE_URL ?? ""}/${file}` }}
         getComponent={() => import('./RollStageCanvas')}
         componentProps={{ roll: staged, color, onDone: finishStage }}
       />
