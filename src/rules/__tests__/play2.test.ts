@@ -72,3 +72,15 @@ describe('inventory', () => {
     expect(() => updateItem(c, 3, { attuned: true })).toThrow();
   });
 });
+
+test('equipping armor takes off the armor you were wearing, but not your shield', () => {
+  let c = addItem(addItem(addItem(base, { itemId: 'scale-mail', qty: 1, equipped: true }), { itemId: 'shield', qty: 1, equipped: true }), {
+    itemId: 'armor-1',
+    baseItemId: 'chain-mail',
+    qty: 1,
+  });
+  c = updateItem(c, 2, { equipped: true });
+  expect(c.inventory.map((i) => Boolean(i.equipped))).toEqual([false, true, true]);
+  // Chain mail 16 + 1 magic + shield 2.
+  expect(derive(c).ac).toBe(19);
+});

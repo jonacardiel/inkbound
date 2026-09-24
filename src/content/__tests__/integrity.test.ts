@@ -97,3 +97,19 @@ describe('SRD content', () => {
     content.skills.all.forEach((s) => expect(ABILITIES).toContain(s.abilityScore));
   });
 });
+
+describe('fields the app treats as always present', () => {
+  const required: [string, { all: object[] }, string[]][] = [
+    ['spells', content.spells, ['index', 'name', 'level', 'school', 'desc', 'range', 'components', 'duration', 'castingTime', 'classes', 'ritual', 'concentration']],
+    ['equipment', content.equipment, ['index', 'name', 'equipmentCategory', 'cost']],
+    ['features', content.features, ['index', 'name', 'class', 'level', 'desc']],
+    ['traits', content.traits, ['index', 'name', 'desc', 'races', 'proficiencies']],
+    ['magic items', content.magicItems, ['index', 'name', 'rarity', 'desc', 'equipmentCategory']],
+  ];
+  test.each(required)('%s have their required fields', (_, table, fields) => {
+    for (const row of table.all as Record<string, unknown>[]) {
+      const missing = fields.filter((f) => row[f] === undefined);
+      expect([row.index, missing]).toEqual([row.index, []]);
+    }
+  });
+});

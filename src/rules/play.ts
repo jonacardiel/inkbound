@@ -1,4 +1,6 @@
 // Table-time actions. Each returns a new Character; nothing mutates.
+import { content } from '@/content';
+
 import type { Character, PlayState } from './character';
 import { derive, type Sheet } from './derive';
 
@@ -156,16 +158,33 @@ export function togglePrepared(c: Character, spellId: string): Character {
 
 export const MAX_ATTUNED = 3;
 
+/** 'body' for worn armor, 'shield' for shields, undefined for everything else (including "+N" items via their base). */
+function armorSlot(item: Character['inventory'][number]): 'body' | 'shield' | undefined {
+  const e = content.equipment.find(item.baseItemId ?? item.itemId ?? '');
+  if (!e?.armorCategory) return undefined;
+  return e.armorCategory === 'Shield' ? 'shield' : 'body';
+}
+
 export function updateItem(c: Character, index: number, change: Partial<Character['inventory'][number]>): Character {
   if (change.attuned && !c.inventory[index].attuned && c.inventory.filter((i) => i.attuned).length >= MAX_ATTUNED) {
     throw new Error(`You can attune to at most ${MAX_ATTUNED} items`);
   }
-  const inventory = c.inventory.map((item, i) => (i === index ? { ...item, ...change } : item)).filter((i) => i.qty > 0);
+  // You wear one suit of armor and one shield: equipping one takes off the other.
+  const slot = change.equipped ? armorSlot(c.inventory[index]) : undefined;
+  const inventory = c.inventory
+    .map((item, i) => {
+      if (i === index) return { ...item, ...change };
+      if (slot && item.equipped && armorSlot(item) === slot) return { ...item, equipped: false };
+      return item;
+    })
+    .filter((i) => i.qty > 0);
   return { ...c, inventory };
 }
 
 export function addItem(c: Character, item: Character['inventory'][number]): Character {
-  const existing = item.itemId ? c.inventory.findIndex((i) => i.itemId === item.itemId && !i.custom) : -1;
+  const existing = item.itemId
+    ? c.inventory.findIndex((i) => i.itemId === item.itemId && !i.custom && i.baseItemId === item.baseItemId)
+    : -1;
   if (existing >= 0) return updateItem(c, existing, { qty: c.inventory[existing].qty + item.qty });
   return { ...c, inventory: [...c.inventory, item] };
 }

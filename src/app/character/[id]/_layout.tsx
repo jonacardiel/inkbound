@@ -1,6 +1,7 @@
-import { useKeepAwake } from 'expo-keep-awake';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { router, Stack, useGlobalSearchParams, usePathname, type Href } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { content } from '@/content';
@@ -22,9 +23,21 @@ const TABS = [
   { route: 'notes', title: 'Notes' },
 ];
 
+const KEEP_AWAKE_TAG = 'character-sheet';
+
+/** Keeps the phone screen on while the sheet is open at the table (not needed on web). */
+function useTableKeepAwake() {
+  useEffect(() => {
+    if (Platform.OS === 'web') return;
+    activateKeepAwakeAsync(KEEP_AWAKE_TAG).catch(() => undefined);
+    return () => {
+      deactivateKeepAwake(KEEP_AWAKE_TAG).catch(() => undefined);
+    };
+  }, []);
+}
+
 export default function SheetLayout() {
-  // Keep the screen on while the sheet is open at the table.
-  useKeepAwake();
+  useTableKeepAwake();
   const s = useSheet();
   const insets = useSafeAreaInsets();
   const pathname = usePathname();

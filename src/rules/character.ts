@@ -36,6 +36,8 @@ export type InventoryItem = {
   /** SRD equipment or magic-item id; omitted for custom items. */
   itemId?: string;
   custom?: { name: string; weight?: number; desc?: string };
+  /** For generic magic items like "Armor, +1" or "Weapon, +2": the armor or weapon it is. */
+  baseItemId?: string;
   qty: number;
   equipped?: boolean;
   attuned?: boolean;

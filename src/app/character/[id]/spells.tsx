@@ -15,6 +15,9 @@ import { fonts, palettes, space } from '@/ui/theme';
 
 const ORDINAL = ['Cantrips', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th'];
 
+/** Classes with the Ritual Casting feature (from each class's spellcasting rules). */
+const RITUAL_CASTERS = ['bard', 'cleric', 'druid', 'wizard'];
+
 export default function Spells() {
   const { character, sheet, color, update } = useSheet()!;
   const roll = useRolls((r) => r.roll);
@@ -32,11 +35,16 @@ export default function Spells() {
   for (const spell of leveled) byLevel.set(spell.level, [...(byLevel.get(spell.level) ?? []), spell]);
   const cantrips = access.cantrips.map((id) => content.spells.get(id));
 
-  const castable = (spell: Spell) => spell.level === 0 || !access.prepares || prepared.has(spell.index) || always.has(spell.index);
+  const classId = character.classes[0].classId;
+  const canRitual = (spell: Spell) => spell.ritual && RITUAL_CASTERS.includes(classId);
+  const isReady = (spell: Spell) => spell.level === 0 || !access.prepares || prepared.has(spell.index) || always.has(spell.index);
+  // Wizards can ritual-cast any ritual in their spellbook, prepared or not.
+  const castable = (spell: Spell) => isReady(spell) || (classId === 'wizard' && canRitual(spell));
 
+  /** Casts a spell; a slot level of 0 means no slot (cantrip or ritual). */
   const cast = (spell: Spell, slotLevel: number) => {
     update((c) => {
-      let next = spell.level > 0 ? spendSlot(c, slotLevel) : c;
+      let next = spell.level > 0 && slotLevel > 0 ? spendSlot(c, slotLevel) : c;
       if (spell.concentration) next = setConcentration(next, spell.index);
       return next;
     });
@@ -99,7 +107,7 @@ export default function Spells() {
                         .filter(Boolean)
                         .join(' · ')}
                     </Text>
-                    {expanded ? spell.desc.concat(spell.higherLevel).map((d) => <Text key={d} style={styles.desc}>{d}</Text>) : null}
+                    {expanded ? spell.desc.concat(spell.higherLevel ?? []).map((d) => <Text key={d} style={styles.desc}>{d}</Text>) : null}
                   </Pressable>
                   <View style={styles.spellActions}>
                     {access.prepares && spell.level > 0 && !isAlways ? (
@@ -126,7 +134,14 @@ export default function Spells() {
         ) : null,
       )}
 
-      <CastModal spell={casting} onClose={() => setCasting(undefined)} onCast={cast} />
+      <CastModal
+        spell={casting}
+        onClose={() => setCasting(undefined)}
+        onCast={cast}
+        onRitual={(spell) => update((c) => (spell.concentration ? setConcentration(c, spell.index) : c))}
+        ritual={casting ? canRitual(casting) : false}
+        ritualOnly={casting ? !isReady(casting) : false}
+      />
     </TabBody>
   );
 }
@@ -141,10 +156,39 @@ function SlotRow({ label, max, spent, color, onChange }: { label: string; max: n
 }
 
 /** Choose which slot to spend (upcasting), then cast. */
-function CastModal({ spell, onClose, onCast }: { spell?: Spell; onClose: () => void; onCast: (spell: Spell, level: number) => void }) {
+function CastModal({
+  spell,
+  onClose,
+  onCast,
+  onRitual,
+  ritual,
+  ritualOnly,
+}: {
+  spell?: Spell;
+  onClose: () => void;
+  onCast: (spell: Spell, level: number) => void;
+  /** Casts without a slot and keeps the modal open for the ritual note. */
+  onRitual: (spell: Spell) => void;
+  ritual: boolean;
+  ritualOnly: boolean;
+}) {
   const { character, sheet, color } = useSheet()!;
+  const [ritualCast, setRitualCast] = useState(false);
   const sc = sheet.spellcasting!;
   if (!spell) return null;
+  if (ritualCast) {
+    return (
+      <Modal visible transparent animationType="fade" onRequestClose={onClose}>
+        <View style={styles.modalWrap}>
+          <View style={styles.modal}>
+            <Text style={styles.modalTitle}>{`${spell.name} (ritual)`}</Text>
+            <Text style={styles.small}>{`Cast as a ritual: no spell slot used. It takes 10 minutes longer than normal (${spell.castingTime} + 10 minutes).`}</Text>
+            <Button label="OK" color={color} kind="solid" onPress={() => { setRitualCast(false); onClose(); }} />
+          </View>
+        </View>
+      </Modal>
+    );
+  }
   const options = sc.pactSlots
     ? [{ level: sc.pactSlots.level, left: sc.pactSlots.count - character.play.pactSlotsSpent }]
     : sc.slots.map((max, i) => ({ level: i + 1, left: max - character.play.slotsSpent[i] })).filter((o) => o.level >= spell.level && o.left + (character.play.slotsSpent[o.level - 1] ?? 0) > 0);
@@ -154,11 +198,22 @@ function CastModal({ spell, onClose, onCast }: { spell?: Spell; onClose: () => v
       <Pressable style={styles.modalWrap} onPress={onClose}>
         <Pressable style={styles.modal} onPress={() => undefined}>
           <Text style={styles.modalTitle}>{`Cast ${spell.name}`}</Text>
-          <Text style={styles.small}>{spell.higherLevel[0] ?? 'Choose a spell slot to spend.'}</Text>
-          {options.map((o) => (
+          <Text style={styles.small}>
+            {ritualOnly ? 'Not prepared: as a wizard you can still cast it from your spellbook as a ritual.' : spell.higherLevel?.[0] ?? 'Choose a spell slot to spend.'}
+          </Text>
+          {(ritualOnly ? [] : options).map((o) => (
             <Button key={o.level} label={`${ORDINAL[o.level]}-level slot (${o.left} left)`} color={color} disabled={o.left <= 0} onPress={() => onCast(spell, o.level)} />
           ))}
-          {spell.ritual ? <Button label="Cast as a ritual (no slot, +10 minutes)" color={palettes.dark.inkMuted} onPress={onClose} /> : null}
+          {ritual ? (
+            <Button
+              label="Cast as a ritual (no slot, +10 minutes)"
+              color={color}
+              onPress={() => {
+                onRitual(spell);
+                setRitualCast(true);
+              }}
+            />
+          ) : null}
           <Button label="Cancel" color={palettes.dark.inkMuted} onPress={onClose} />
         </Pressable>
       </Pressable>

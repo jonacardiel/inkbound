@@ -163,10 +163,18 @@ export function derive(character: Character): Sheet {
   if (has('draconic-resilience')) maxHp += level;
 
   // --- Armor class ----------------------------------------------------------------
-  const equipped = character.inventory.filter((i) => i.equipped && i.itemId);
-  const equippedItems = equipped
-    .map((i) => content.equipment.find(i.itemId!))
-    .filter((e): e is Equipment => e !== undefined);
+  // Equipped gear, with generic magic items ("Armor, +1", "Weapon, +2") resolved to their base item.
+  type Worn = Equipment & { magicBonus: number; displayName: string };
+  const equippedItems: Worn[] = character.inventory
+    .filter((i) => i.equipped && i.itemId)
+    .flatMap((i): Worn[] => {
+      const mundane = content.equipment.find(i.itemId!);
+      if (mundane) return [{ ...mundane, magicBonus: 0, displayName: mundane.name }];
+      const generic = i.itemId!.match(/^(armor|weapon)-(\d)$/);
+      const base = generic && i.baseItemId ? content.equipment.find(i.baseItemId) : undefined;
+      if (!generic || !base) return [];
+      return [{ ...base, magicBonus: Number(generic[2]), displayName: `${base.name} +${generic[2]}` }];
+    });
   const armor = equippedItems.find((e) => e.armorCategory && e.armorCategory !== 'Shield');
   const shield = equippedItems.some((e) => e.armorCategory === 'Shield');
   const fightingStyle = (style: string) => [...choiceValues].some((v) => v.endsWith(`fighting-style-${style}`));
@@ -174,7 +182,7 @@ export function derive(character: Character): Sheet {
   let ac: number;
   if (armor?.armorClass) {
     const dex = armor.armorClass.dexBonus ? Math.min(mods.dex, armor.armorClass.maxBonus ?? Infinity) : 0;
-    ac = armor.armorClass.base + dex + (fightingStyle('defense') ? 1 : 0);
+    ac = armor.armorClass.base + dex + armor.magicBonus + (fightingStyle('defense') ? 1 : 0);
   } else {
     const options = [10 + mods.dex];
     if (has('barbarian-unarmored-defense')) options.push(10 + mods.dex + mods.con);
@@ -209,13 +217,13 @@ export function derive(character: Character): Sheet {
     const ranged = w.weaponRange === 'Ranged';
     const ability: Ability = ranged ? 'dex' : props.has('finesse') && mods.dex > mods.str ? 'dex' : 'str';
     const proficient = isProficient(proficiencies, w.index);
-    let damageMod = mods[ability];
-    let toHit = mods[ability] + (proficient ? profBonus : 0);
+    let damageMod = mods[ability] + w.magicBonus;
+    let toHit = mods[ability] + (proficient ? profBonus : 0) + w.magicBonus;
     if (ranged && fightingStyle('archery')) toHit += 2;
     if (!ranged && !props.has('two-handed') && weapons.length === 1 && fightingStyle('dueling')) damageMod += 2;
     if (!ranged && ability === 'str') damageMod += rageBonus;
     return {
-      name: w.name,
+      name: w.displayName,
       itemId: w.index,
       toHit,
       damage: `${w.damage!.damageDice}${signed(damageMod)}`,

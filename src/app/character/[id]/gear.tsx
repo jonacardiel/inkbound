@@ -14,11 +14,16 @@ const COINS: (keyof Currency)[] = ['pp', 'gp', 'ep', 'sp', 'cp'];
 
 type Entry = Character['inventory'][number];
 
+/** "Armor, +1" / "Weapon, +2": generic magic items that need a base armor or weapon. */
+const GENERIC_MAGIC = /^(armor|weapon)-(\d)$/;
+
 function itemInfo(entry: Entry) {
   const item = entry.itemId ? findItem(entry.itemId) : undefined;
   const magic = item && 'rarity' in item ? item : undefined;
-  const mundane = item && !magic ? content.equipment.find(item.index) : undefined;
-  const name = entry.custom?.name ?? item?.name ?? 'Item';
+  const generic = entry.itemId?.match(GENERIC_MAGIC);
+  const base = generic && entry.baseItemId ? content.equipment.find(entry.baseItemId) : undefined;
+  const mundane = base ?? (item && !magic ? content.equipment.find(item.index) : undefined);
+  const name = entry.custom?.name ?? (base ? `${base.name} +${generic![2]}` : item?.name ?? 'Item');
   const weight = (entry.custom?.weight ?? mundane?.weight ?? 0) * entry.qty;
   const rarity = magic?.rarity.name.toLowerCase();
   const attunement = Boolean(magic?.desc[0]?.includes('requires attunement'));
@@ -131,7 +136,7 @@ function ItemModal({ index, onClose }: { index?: number; onClose: () => void }) 
       <Pressable style={styles.modalWrap} onPress={onClose}>
         <Pressable style={styles.modal} onPress={() => undefined}>
           <Text style={styles.modalTitle}>{info.name}</Text>
-          <Text style={styles.small}>{[info.rarity ? info.rarity : null, entry.itemId ? itemStats(entry.itemId) : null].filter(Boolean).join(' · ')}</Text>
+          <Text style={styles.small}>{[info.rarity ? info.rarity : null, info.mundane ? itemStats(info.mundane.index) : null].filter(Boolean).join(' · ')}</Text>
           {desc.slice(0, 4).map((d) => (
             <Text key={d} style={styles.desc}>
               {d}
@@ -155,10 +160,14 @@ function ItemModal({ index, onClose }: { index?: number; onClose: () => void }) 
 function AddItemModal({ visible, onClose, onAdd }: { visible: boolean; onClose: () => void; onAdd: (entry: Entry) => void }) {
   const { color } = useSheet()!;
   const [query, setQuery] = useState('');
+  const [generic, setGeneric] = useState<string>();
   const all = useMemo(
     () => [
       ...content.equipment.all.map((e) => ({ id: e.index, name: e.name, kind: 'gear' })),
-      ...content.magicItems.all.filter((m) => !m.variant).map((m) => ({ id: m.index, name: m.name, kind: m.rarity.name })),
+      // Generic +N armor/weapons are listed as their +1/+2/+3 variants; other variants stay grouped.
+      ...content.magicItems.all
+        .filter((m) => (GENERIC_MAGIC.test(m.index) ? true : !m.variant && m.index !== 'armor' && m.index !== 'weapon'))
+        .map((m) => ({ id: m.index, name: m.name, kind: m.rarity.name })),
     ],
     [],
   );
@@ -166,14 +175,32 @@ function AddItemModal({ visible, onClose, onAdd }: { visible: boolean; onClose: 
   const results = q ? all.filter((i) => i.name.toLowerCase().includes(q)).slice(0, 40) : [];
   const close = () => {
     setQuery('');
+    setGeneric(undefined);
     onClose();
   };
+  const bases = generic
+    ? content.equipment.all.filter((e) => (generic.startsWith('armor') ? e.armorCategory && e.armorCategory !== 'Shield' : e.weaponCategory))
+    : [];
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={close}>
       <View style={styles.modalWrap}>
         <View style={[styles.modal, { maxHeight: '85%' }]}>
-          <Text style={styles.modalTitle}>Add item</Text>
+          <Text style={styles.modalTitle}>{generic ? `Which ${generic.startsWith('armor') ? 'armor' : 'weapon'} is it?` : 'Add item'}</Text>
+          {generic ? (
+            <FlatList
+              data={bases}
+              keyExtractor={(i) => i.index}
+              style={{ maxHeight: 360 }}
+              renderItem={({ item }) => (
+                <Pressable accessibilityRole="button" onPress={() => { onAdd({ itemId: generic, baseItemId: item.index, qty: 1 }); close(); }} style={styles.result}>
+                  <Text style={styles.resultName}>{`${item.name} +${generic.slice(-1)}`}</Text>
+                  <Text style={styles.small}>{itemStats(item.index)}</Text>
+                </Pressable>
+              )}
+            />
+          ) : null}
+          {generic ? null : (
           <TextInput
             value={query}
             onChangeText={setQuery}
@@ -183,19 +210,29 @@ function AddItemModal({ visible, onClose, onAdd }: { visible: boolean; onClose: 
             accessibilityLabel="Search items"
             style={styles.search}
           />
+          )}
+          {generic ? null : (
           <FlatList
             data={results}
             keyExtractor={(i) => i.id}
             keyboardShouldPersistTaps="handled"
             style={{ maxHeight: 320 }}
             renderItem={({ item }) => (
-              <Pressable accessibilityRole="button" onPress={() => { onAdd({ itemId: item.id, qty: 1 }); close(); }} style={styles.result}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => {
+                  if (GENERIC_MAGIC.test(item.id)) return setGeneric(item.id);
+                  onAdd({ itemId: item.id, qty: 1 });
+                  close();
+                }}
+                style={styles.result}>
                 <Text style={styles.resultName}>{item.name}</Text>
                 <Text style={[styles.small, item.kind !== 'gear' && { color: rarityColors[item.kind.toLowerCase()] ?? color }]}>{item.kind}</Text>
               </Pressable>
             )}
           />
-          {q ? <Button label={`Add "${query.trim()}" as a custom item`} color={color} onPress={() => { onAdd({ custom: { name: query.trim() }, qty: 1 }); close(); }} /> : null}
+          )}
+          {q && !generic ? <Button label={`Add "${query.trim()}" as a custom item`} color={color} onPress={() => { onAdd({ custom: { name: query.trim() }, qty: 1 }); close(); }} /> : null}
           <Button label="Cancel" color={palettes.dark.inkMuted} onPress={close} />
         </View>
       </View>

@@ -159,7 +159,8 @@ export type Spell = {
   level: number;
   school: string;
   desc: string[];
-  higherLevel: string[];
+  /** "At Higher Levels" text; absent for most spells. */
+  higherLevel?: string[];
   range: string;
   components: ('V' | 'S' | 'M')[];
   material?: string;

@@ -271,7 +271,10 @@ export function pendingChoices(character: Character, opts: Opts = {}): Choice[] 
   return allChoices(character, opts).filter((c) => {
     if (c.id === 'subrace') return !character.subrace;
     if (c.id === 'subclass') return !character.classes[0]?.subclassId;
-    return (character.choices[c.id]?.length ?? 0) < c.count;
+    const picked = character.choices[c.id] ?? [];
+    // An ASI taken as a feat is a single pick.
+    if (c.id.startsWith('asi:') && picked.some((id) => content.feats.find(id))) return false;
+    return picked.length < c.count;
   });
 }
 

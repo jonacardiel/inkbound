@@ -120,3 +120,10 @@ test('every class and race combination produces well-formed choices', () => {
     }
   }
 });
+
+test('an ASI is resolved by two ability picks or by a feat', () => {
+  const l4 = (asi: string[]) => ids(character({ classes: [{ classId: 'fighter', subclassId: 'champion', level: 4 }], choices: { 'asi:fighter:4': asi } }));
+  expect(l4(['str'])).toContain('asi:fighter:4');
+  expect(l4(['str', 'str'])).not.toContain('asi:fighter:4');
+  expect(l4(['grappler'])).not.toContain('asi:fighter:4');
+});

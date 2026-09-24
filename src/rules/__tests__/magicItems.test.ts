@@ -40,3 +40,19 @@ test('Amulet of Health sets CON to 19, raising HP; a Belt of Storm Giant Strengt
   expect(c.maxHp).toBe(10 + 4); // d10 + CON 19 (+4)
   expect(derive(fighter([{ itemId: 'belt-of-giant-strength-storm', qty: 1, attuned: true }])).abilities.str.score).toBe(29);
 });
+
+test('"Armor, +1" on chain mail adds 1 AC; "Weapon, +2" on a longsword adds 2 to hit and damage', () => {
+  const c = derive(
+    fighter([
+      { itemId: 'armor-1', baseItemId: 'chain-mail', qty: 1, equipped: true },
+      { itemId: 'weapon-2', baseItemId: 'longsword', qty: 1, equipped: true },
+    ]),
+  );
+  expect(c.ac).toBe(16 + 1);
+  // STR 16 (+3), proficiency +2, magic +2.
+  expect(c.attacks.find((a) => a.name === 'Longsword +2')).toMatchObject({ toHit: 7, damage: '1d8+5' });
+});
+
+test('a generic magic item without a base item does nothing', () => {
+  expect(derive(fighter([{ itemId: 'armor-3', qty: 1, equipped: true }])).ac).toBe(derive(fighter([])).ac);
+});
