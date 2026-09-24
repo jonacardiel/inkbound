@@ -50,3 +50,4 @@ art/*.log
 art/*-sheet.jpg
 art/review/
 public/canvaskit.wasm
+art/rejected/
