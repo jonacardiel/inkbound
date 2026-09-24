@@ -78,6 +78,15 @@ export default function SheetLayout() {
               {entry.subclassId ? ` · ${content.subclasses.get(entry.subclassId).name}` : ''}
             </Text>
           </View>
+          {entry.level < 20 ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`Level up to ${entry.level + 1}`}
+              onPress={() => router.push(`/level-up/${character.id}` as Href)}
+              style={({ pressed }) => [styles.levelUp, { borderColor: color, opacity: pressed ? 0.7 : 1 }]}>
+              <Text style={[styles.levelUpText, { color }]}>▲ Level</Text>
+            </Pressable>
+          ) : null}
         </View>
         <View style={styles.headerStats}>
           <HpPanel />
@@ -132,6 +141,8 @@ const styles = StyleSheet.create({
   portrait: { width: 48, height: 64, borderRadius: 6, borderWidth: 1.5, overflow: 'hidden' },
   name: { fontFamily: fonts.display, fontSize: 24, color: palettes.dark.ink },
   sub: { fontFamily: fonts.body, fontSize: 14, color: palettes.dark.inkMuted },
+  levelUp: { borderWidth: 1.5, borderRadius: 16, paddingHorizontal: 10, paddingVertical: 6, minHeight: 34, justifyContent: 'center' },
+  levelUpText: { fontFamily: fonts.bodyBold, fontSize: 13 },
   headerStats: { flexDirection: 'row', alignItems: 'center', gap: space.md },
   headerStat: { alignItems: 'center', minWidth: 48 },
   headerStatValue: { fontFamily: fonts.display, fontSize: 24, color: palettes.dark.ink, fontVariant: ['tabular-nums'] },
