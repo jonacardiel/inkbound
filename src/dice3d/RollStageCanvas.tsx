@@ -6,12 +6,14 @@ import Animated, { cancelAnimation, Easing, FadeIn, useDerivedValue, useSharedVa
 import { scheduleOnRN } from 'react-native-worklets';
 
 import type { RollResult } from '@/rules/dice';
+import { useDiceSettings } from '@/sheet/rolls';
 import { fonts, palettes, space } from '@/ui/theme';
 
 import { drawDie, drawShadow, FONT_BASE } from './draw';
 import { drawBurst, drawCrack } from './effects';
 import { driftAt, entryAt, heightAt, IMPACTS, orientationAt, planThrow, squashAt, type Throw } from './motion';
 import { polyhedron, type Polyhedron, type Sides } from './polyhedra';
+import { playClatter } from './sounds';
 
 const D20_MS = 1400;
 const DAMAGE_MS = 1050;
@@ -78,6 +80,10 @@ export default function RollStageCanvas({ roll, color, onDone }: { roll: RollRes
     progress.set(withTiming(1, { duration, easing: Easing.linear }, (finished) => {
       if (finished) scheduleOnRN(land);
     }));
+    // Clatter as the dice first hit the table (slightly early: the clip has a short lead-in).
+    const soundTimer = useDiceSettings.getState().sound
+      ? setTimeout(() => playClatter(dice.length), Math.max(0, IMPACTS[0] * duration - 40))
+      : undefined;
     // Haptic tap on each bounce.
     const timers =
       Platform.OS === 'web'
@@ -85,8 +91,11 @@ export default function RollStageCanvas({ roll, color, onDone }: { roll: RollRes
         : IMPACTS.map((t, i) =>
             setTimeout(() => Haptics.impactAsync([Haptics.ImpactFeedbackStyle.Heavy, Haptics.ImpactFeedbackStyle.Medium, Haptics.ImpactFeedbackStyle.Light][i]), t * duration),
           );
-    return () => timers.forEach(clearTimeout);
-  }, [progress, duration]);
+    return () => {
+      timers.forEach(clearTimeout);
+      clearTimeout(soundTimer);
+    };
+  }, [progress, duration, dice.length]);
 
   // After landing: glow the face, run crit effects, show the total, then close.
   useEffect(() => {

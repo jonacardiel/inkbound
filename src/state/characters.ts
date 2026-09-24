@@ -1,3 +1,4 @@
+import { useSyncExternalStore } from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -28,3 +29,12 @@ export const useCharacters = create<CharactersState>()(
     { name: 'characters', storage: persistStorage, version: 1 },
   ),
 );
+
+/** True once saved characters have loaded from storage (so screens don't flash "not found" or "no heroes"). */
+export function useCharactersHydrated(): boolean {
+  return useSyncExternalStore(
+    (onChange) => useCharacters.persist.onFinishHydration(onChange),
+    () => useCharacters.persist.hasHydrated(),
+    () => false,
+  );
+}

@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { content } from '@/content';
 import { RollStage } from '@/dice3d/RollStage';
+import { useCharactersHydrated } from '@/state/characters';
 import { DiceTray } from '@/sheet/DiceTray';
 import { HpPanel } from '@/sheet/HpPanel';
 import { RollToast } from '@/sheet/RollToast';
@@ -43,7 +44,10 @@ export default function SheetLayout() {
   const insets = useSafeAreaInsets();
   const pathname = usePathname();
   const { id } = useGlobalSearchParams<{ id: string }>();
+  const hydrated = useCharactersHydrated();
 
+  // Saved characters load asynchronously; show the empty table until they're in.
+  if (!hydrated) return <View style={styles.root} />;
   if (!s) {
     return (
       <View style={[styles.root, { alignItems: 'center', justifyContent: 'center' }]}>

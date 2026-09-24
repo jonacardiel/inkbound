@@ -2,8 +2,9 @@ import { WithSkiaWeb } from '@shopify/react-native-skia/lib/module/web';
 import { useEffect } from 'react';
 import { useReducedMotion } from 'react-native-reanimated';
 
-import { useRolls } from '@/sheet/rolls';
+import { useDiceSettings, useRolls } from '@/sheet/rolls';
 
+import { preloadDiceSounds } from './sounds';
 import { StageBoundary } from './StageBoundary';
 
 /**
@@ -14,6 +15,11 @@ export function RollStage({ color }: { color: string }) {
   const staged = useRolls((s) => s.staged);
   const finishStage = useRolls((s) => s.finishStage);
   const reduceMotion = useReducedMotion();
+  const sound = useDiceSettings((s) => s.sound);
+
+  useEffect(() => {
+    if (sound) preloadDiceSounds();
+  }, [sound]);
 
   useEffect(() => {
     if (staged && reduceMotion) finishStage();

@@ -48,7 +48,7 @@ export function DiceTray({ color }: { color: string }) {
   const poolSize = Object.values(pool).reduce((a, b) => a + b, 0);
   const expression = poolExpression(pool, modifier);
   const { roll, mode, setMode, log, forceNextD20, setForceNextD20 } = useRolls();
-  const { animation, setAnimation } = useDiceSettings();
+  const { animation, setAnimation, sound, setSound } = useDiceSettings();
   const insets = useSafeAreaInsets();
 
   const addDie = (sides: number) => {
@@ -58,7 +58,7 @@ export function DiceTray({ color }: { color: string }) {
   const rollPool = () => {
     if (!expression) return;
     setOpen(false);
-    setTimeout(() => roll(expression.replace(/s/g, ''), expression), CLOSE_MS);
+    setTimeout(() => roll(expression.replace(/\s/g, ''), expression), CLOSE_MS);
   };
 
   return (
@@ -165,6 +165,19 @@ export function DiceTray({ color }: { color: string }) {
             ))}
           </View>
 
+          <Pressable
+            accessibilityRole="switch"
+            accessibilityState={{ checked: sound }}
+            accessibilityLabel="Dice sounds"
+            onPress={() => setSound(!sound)}
+            style={styles.poolRow}>
+            <Text style={styles.hint}>Dice sounds</Text>
+            <View style={{ flex: 1 }} />
+            <View style={[styles.toggle, sound && { backgroundColor: color, borderColor: color }]}>
+              <Text style={[styles.toggleText, sound && { color: palettes.dark.table }]}>{sound ? 'On' : 'Off'}</Text>
+            </View>
+          </Pressable>
+
           {__DEV__ ? (
             <View style={styles.countRow}>
               <Text style={styles.hint}>Dev: force next d20</Text>
@@ -229,6 +242,8 @@ const styles = StyleSheet.create({
   dieBadgeText: { fontFamily: fonts.bodyBold, fontSize: 12, color: palettes.dark.table },
   poolRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   modifier: { minWidth: 36, textAlign: 'center', fontFamily: fonts.display, fontSize: 20, color: palettes.dark.ink, fontVariant: ['tabular-nums'] },
+  toggle: { minWidth: 56, minHeight: 32, borderRadius: 16, borderWidth: 1.5, borderColor: palettes.dark.rule, alignItems: 'center', justifyContent: 'center' },
+  toggleText: { fontFamily: fonts.bodyBold, fontSize: 13, color: palettes.dark.inkMuted },
   clear: { fontFamily: fonts.bodyBold, fontSize: 14, color: palettes.dark.inkMuted, textDecorationLine: 'underline' },
   roll: { minHeight: 54, borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.sm, paddingHorizontal: space.lg },
   rollText: { fontFamily: fonts.bodyBold, fontSize: 17, color: palettes.dark.table },

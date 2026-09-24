@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } fr
 
 import { content } from '@/content';
 import { derive } from '@/rules/derive';
-import { useCharacters } from '@/state/characters';
+import { useCharacters, useCharactersHydrated } from '@/state/characters';
 import { useDraft } from '@/state/draft';
 import { ArtCard } from '@/ui/ArtCard';
 import { classColors, fonts, palettes, space, usePalette } from '@/ui/theme';
@@ -12,6 +12,7 @@ export default function RosterScreen() {
   const palette = usePalette();
   const characters = Object.values(useCharacters((s) => s.characters));
   const draftInProgress = useDraft((s) => Boolean(s.draft.race || s.draft.classId));
+  const hydrated = useCharactersHydrated();
   const { width } = useWindowDimensions();
   const columns = width >= 700 ? 3 : 2;
   const cardWidth = (Math.min(width, 960) - space.lg * (columns + 1)) / columns;
@@ -29,7 +30,7 @@ export default function RosterScreen() {
     <ScrollView style={{ backgroundColor: palette.table }} contentContainerStyle={styles.screen}>
       <Stack.Screen options={{ title: 'Your Party' }} />
 
-      {characters.length === 0 ? (
+      {!hydrated ? null : characters.length === 0 ? (
         <View style={[styles.empty, { backgroundColor: palette.page, borderColor: palette.rule }]}>
           <View style={[styles.innerRule, { borderColor: palette.pageInk }]}>
             <Text style={[styles.title, { color: palette.pageInk }]}>No heroes yet</Text>

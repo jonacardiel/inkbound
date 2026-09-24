@@ -25,7 +25,9 @@ export const classMeta: Record<string, ClassMeta> = {
     primary: ['str'],
     quickBuildOrder: ['str', 'con', 'dex', 'wis', 'cha', 'int'],
     spot: { colorName: 'ember orange', element: 'the rage burning in the eyes and along the edge of the greataxe' },
-    artSubject: 'A towering barbarian in furs, mid-roar, swinging a massive greataxe overhead',
+    // Explicit grip: earlier generations showed a free hand clutching an arm, or the axe held upside down.
+    artSubject:
+      'A towering barbarian in furs, mid-roar, raising a massive two-handed greataxe high above his head; both of his hands grip the lower end of the long wooden haft, one hand above the other, and the broad axe blade is at the top end of the haft, facing forward, ready to strike down; anatomically correct arms and hands',
   },
   bard: {
     tagline: 'Words, songs and secrets, each one a weapon or a blessing.',

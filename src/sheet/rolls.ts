@@ -10,14 +10,27 @@ import { persistStorage } from '@/state/storage';
 /** Full: cinematic 3D dice. Quick: the result toast with a short number tumble. Off: just the result. */
 export type DiceAnimation = 'full' | 'quick' | 'off';
 
-type DiceSettings = { animation: DiceAnimation; setAnimation: (a: DiceAnimation) => void };
+type DiceSettings = {
+  animation: DiceAnimation;
+  sound: boolean;
+  setAnimation: (a: DiceAnimation) => void;
+  setSound: (on: boolean) => void;
+};
 
 export const useDiceSettings = create<DiceSettings>()(
-  persist((set) => ({ animation: 'full', setAnimation: (animation) => set({ animation }) }), {
-    name: 'dice-settings',
-    storage: persistStorage,
-    version: 1,
-  }),
+  persist(
+    (set) => ({
+      animation: 'full',
+      sound: true,
+      setAnimation: (animation) => set({ animation }),
+      setSound: (sound) => set({ sound }),
+    }),
+    {
+      name: 'dice-settings',
+      storage: persistStorage,
+      version: 1,
+    },
+  ),
 );
 
 type RollState = {

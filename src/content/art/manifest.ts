@@ -27,7 +27,7 @@ const ENTRIES: [ArtKind, string, number, string][] = [
   ['ancestries', 'draconic-ancestry-white', require('../../../assets/art/ancestries/draconic-ancestry-white.webp'), 'UhP6jT-:~VRPxWe-bHbI^*RiIpxu%Moga}ax'],
   ['backgrounds', 'acolyte', require('../../../assets/art/backgrounds/acolyte.webp'), 'UnMQU^xa~W%Lofj[t6of_2WCM{t6t6ayfkj['],
   ['backgrounds', 'custom', require('../../../assets/art/backgrounds/custom.webp'), 'UyOWD{of-o%Lt6fQa}oL~Vs:M{WCt7j?s.a#'],
-  ['classes', 'barbarian', require('../../../assets/art/classes/barbarian.webp'), 'UrMs}{xa~WxuoJj[ofj@~WofIojtxaayj[ay'],
+  ['classes', 'barbarian', require('../../../assets/art/classes/barbarian.webp'), 'UmMQFXxa~Vxa-oayWCj[~VayNGt6Rjoet7ay'],
   ['classes', 'bard', require('../../../assets/art/classes/bard.webp'), 'UdK,{Lf%~U%Ls:WVofjb^*s:Rkj[t5oLafkB'],
   ['classes', 'cleric', require('../../../assets/art/classes/cleric.webp'), 'UwNJm:xt^*xaxZoeWCR*~VofM{j[t6ays:of'],
   ['classes', 'druid', require('../../../assets/art/classes/druid.webp'), 'UCHxcza1%2~o?Z%3kBW-~V-.00M}?HIoM|n,'],
@@ -311,8 +311,8 @@ const ENTRIES: [ArtKind, string, number, string][] = [
   ['sigils', 'sorcerer', require('../../../assets/art/sigils/sorcerer.webp'), 'UlM6|zoe~pxts.j@kCjs~poeV[oft7ayofj['],
   ['sigils', 'warlock', require('../../../assets/art/sigils/warlock.webp'), 'UoNTO6t6~Uxut6j[ofay~ooeICfQxtayjuof'],
   ['sigils', 'wizard', require('../../../assets/art/sigils/wizard.webp'), 'UkK1ads.~Uxut7jsj?j]~Uoft8f5s+j[ozax'],
-  ['subclasses', 'berserker', require('../../../assets/art/subclasses/berserker.webp'), 'UkNmZixZ~VtRs.jYWCWq~WoeIUofofays:j['],
-  ['subclasses', 'champion', require('../../../assets/art/subclasses/champion.webp'), 'UiPiqyxa~V%LxZoLofWC~pof9ZWBxufPWCj['],
+  ['subclasses', 'berserker', require('../../../assets/art/subclasses/berserker.webp'), 'UfOf*_of~V-;s.oeofay~Ws:E1WBxtWBWVof'],
+  ['subclasses', 'champion', require('../../../assets/art/subclasses/champion.webp'), 'UnMjKwt7^*%2-oofR*ay~VofR*n*WBays:f7'],
   ['subclasses', 'devotion', require('../../../assets/art/subclasses/devotion.webp'), 'UoMZ~[jY~V%MogaeoJkC~VofM{j[xYofozae'],
   ['subclasses', 'draconic', require('../../../assets/art/subclasses/draconic.webp'), 'UVMZgext~U%1-Uozj[V[-:X8E1s.tRWBWBkC'],
   ['subclasses', 'evocation', require('../../../assets/art/subclasses/evocation.webp'), 'UfMs}]n}~U-:j[oejsj]~Uj]NIoc$~Rlofoc'],
@@ -322,7 +322,7 @@ const ENTRIES: [ArtKind, string, number, string][] = [
   ['subclasses', 'life', require('../../../assets/art/subclasses/life.webp'), 'UcMjNy%2=|t6~Vt6E2R*V@Rk9GofM|WBj?of'],
   ['subclasses', 'lore', require('../../../assets/art/subclasses/lore.webp'), 'UgLpv-ox~U%2sCoeofaf_1ofM{bFt6jas:bG'],
   ['subclasses', 'open-hand', require('../../../assets/art/subclasses/open-hand.webp'), 'UtMZ,Mof?Gxtxtayayof~VofNGoLs:oeoeWB'],
-  ['subclasses', 'thief', require('../../../assets/art/subclasses/thief.webp'), 'UpNTREt7~Vxut7oej[WB~WofIoj[xtj[ayay'],
+  ['subclasses', 'thief', require('../../../assets/art/subclasses/thief.webp'), 'UoJ@m;t7~UxtoLoLj[WC~Vj@WVt6s:WCofof'],
 ];
 
 export const artManifest: Partial<Record<ArtKind, Record<string, ArtAsset>>> = {};
