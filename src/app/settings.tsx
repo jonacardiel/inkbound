@@ -87,6 +87,9 @@ export default function Settings() {
 
       <Section title="Credits & licenses">
         <Credit title="Rules content">{source.attribution}</Credit>
+        <Credit title="Rules content (2024)">
+          This work includes material from the System Reference Document 5.2 (&ldquo;SRD 5.2&rdquo;) by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode. Used here: the Criminal, Sage and Soldier backgrounds and their origin feats, adapted.
+        </Credit>
         <Credit title="Rules data" link="https://github.com/5e-bits/5e-database">
           Structured SRD data from the 5e-database project by 5e-bits (MIT License).
         </Credit>

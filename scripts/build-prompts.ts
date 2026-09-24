@@ -10,6 +10,7 @@ import { resolve } from 'node:path';
 import { content } from '../src/content';
 import { classMeta } from '../src/content/meta/classes';
 import { raceMeta, schoolMeta } from '../src/content/meta/races';
+import { EXTRA_BACKGROUNDS } from '../src/content/extraBackgrounds';
 import { figurePrompt, itemPrompt, schoolPrompt } from './art/templates';
 
 export type ArtEntry = {
@@ -58,6 +59,16 @@ add({
     { heroic: false },
   ),
 });
+
+for (const bg of EXTRA_BACKGROUNDS) {
+  add({
+    id: bg.index,
+    kind: 'backgrounds',
+    tier: 1,
+    aspect: '3:4',
+    prompt: figurePrompt(bg.artSubject, { colorName: 'warm amber', element: 'the brightest light in the scene' }, { heroic: false }),
+  });
+}
 
 const isStartingGear = (e: (typeof content.equipment.all)[number]) =>
   e.equipmentCategory === 'weapon' || e.equipmentCategory === 'armor' || e.gearCategory === 'equipment-packs';

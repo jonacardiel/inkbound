@@ -54,20 +54,24 @@ function toInventory(items: { id: string; count: number }[]): InventoryItem[] {
 
 /** The draft with its starting gear equipped, for live previews of AC and attacks. */
 export function withStartingGear(draft: Character): Character {
-  return { ...draft, inventory: toInventory(startingItems(draft)) };
+  return { ...draft, inventory: toInventory(startingItems(draft).filter((i) => !COINS.has(i.id))) };
 }
+
+/** Coins in starting gear are listed as items with these ids ("gp" x 50); they go to the purse. */
+const COINS = new Set<string>(['cp', 'sp', 'ep', 'gp', 'pp']);
 
 export function finalizeCharacter(draft: Character, id: string): Character {
   const background = content.backgrounds.find(draft.background);
   const currency: Currency = { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 };
-  const gold = (background as { startingGold?: { quantity: number; unit: keyof Currency } } | undefined)?.startingGold;
-  if (gold) currency[gold.unit] += gold.quantity;
+  if (background?.startingGold) currency[background.startingGold.unit] += background.startingGold.quantity;
+  const items = startingItems(draft);
+  for (const { id: coin, count } of items) if (COINS.has(coin)) currency[coin as keyof Currency] += count;
 
   return {
     ...draft,
     id,
     name: draft.name.trim() || 'Unnamed hero',
-    inventory: toInventory(startingItems(draft)),
+    inventory: toInventory(items.filter((i) => !COINS.has(i.id))),
     currency,
   };
 }

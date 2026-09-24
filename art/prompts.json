@@ -217,6 +217,90 @@
     "prompt": "A 19th-century wood-engraving illustration in the manner of Gustave Doré: dense, confident cross-hatching in black ink on warm aged paper, dramatic chiaroscuro and an epic sense of scale. A lone traveler seen from behind at the start of a winding road that leads toward distant mountains, an unwritten journal in hand. The whole image is monochrome ink except for one luminous spot color, dawn amber, which appears only on the rising sun on the horizon. Centered composition with a strong, readable silhouette against a softly vignetted paper background. The page is clean and unmarked apart from the illustration itself: it is purely pictorial, with no writing of any kind anywhere, no signature, no caption, no title and no labels."
   },
   {
+    "id": "criminal",
+    "kind": "backgrounds",
+    "tier": 1,
+    "aspect": "3:4",
+    "prompt": "A 19th-century wood-engraving illustration in the manner of Gustave Doré: dense, confident cross-hatching in black ink on warm aged paper, dramatic chiaroscuro and an epic sense of scale. A hooded thief crouched on a rain-slick rooftop at night, a ring of lockpicks in hand, the city below. The whole image is monochrome ink except for one luminous spot color, warm amber, which appears only on the brightest light in the scene. Centered composition with a strong, readable silhouette against a softly vignetted paper background. The page is clean and unmarked apart from the illustration itself: it is purely pictorial, with no writing of any kind anywhere, no signature, no caption, no title and no labels."
+  },
+  {
+    "id": "sage",
+    "kind": "backgrounds",
+    "tier": 1,
+    "aspect": "3:4",
+    "prompt": "A 19th-century wood-engraving illustration in the manner of Gustave Doré: dense, confident cross-hatching in black ink on warm aged paper, dramatic chiaroscuro and an epic sense of scale. A scholar at a candlelit desk in a towering library, surrounded by stacks of books and scrolls, quill raised. The whole image is monochrome ink except for one luminous spot color, warm amber, which appears only on the brightest light in the scene. Centered composition with a strong, readable silhouette against a softly vignetted paper background. The page is clean and unmarked apart from the illustration itself: it is purely pictorial, with no writing of any kind anywhere, no signature, no caption, no title and no labels."
+  },
+  {
+    "id": "soldier",
+    "kind": "backgrounds",
+    "tier": 1,
+    "aspect": "3:4",
+    "prompt": "A 19th-century wood-engraving illustration in the manner of Gustave Doré: dense, confident cross-hatching in black ink on warm aged paper, dramatic chiaroscuro and an epic sense of scale. A veteran soldier in a battered gambeson planting a spear beside a torn battle standard on a smoky field. The whole image is monochrome ink except for one luminous spot color, warm amber, which appears only on the brightest light in the scene. Centered composition with a strong, readable silhouette against a softly vignetted paper background. The page is clean and unmarked apart from the illustration itself: it is purely pictorial, with no writing of any kind anywhere, no signature, no caption, no title and no labels."
+  },
+  {
+    "id": "deckhand",
+    "kind": "backgrounds",
+    "tier": 1,
+    "aspect": "3:4",
+    "prompt": "A 19th-century wood-engraving illustration in the manner of Gustave Doré: dense, confident cross-hatching in black ink on warm aged paper, dramatic chiaroscuro and an epic sense of scale. A weathered deckhand hauling on rigging ropes as a sailing ship pitches through towering waves. The whole image is monochrome ink except for one luminous spot color, warm amber, which appears only on the brightest light in the scene. Centered composition with a strong, readable silhouette against a softly vignetted paper background. The page is clean and unmarked apart from the illustration itself: it is purely pictorial, with no writing of any kind anywhere, no signature, no caption, no title and no labels."
+  },
+  {
+    "id": "highborn",
+    "kind": "backgrounds",
+    "tier": 1,
+    "aspect": "3:4",
+    "prompt": "A 19th-century wood-engraving illustration in the manner of Gustave Doré: dense, confident cross-hatching in black ink on warm aged paper, dramatic chiaroscuro and an epic sense of scale. A young noble in a fine embroidered coat standing on a sweeping marble staircase beneath family banners. The whole image is monochrome ink except for one luminous spot color, warm amber, which appears only on the brightest light in the scene. Centered composition with a strong, readable silhouette against a softly vignetted paper background. The page is clean and unmarked apart from the illustration itself: it is purely pictorial, with no writing of any kind anywhere, no signature, no caption, no title and no labels."
+  },
+  {
+    "id": "troubadour",
+    "kind": "backgrounds",
+    "tier": 1,
+    "aspect": "3:4",
+    "prompt": "A 19th-century wood-engraving illustration in the manner of Gustave Doré: dense, confident cross-hatching in black ink on warm aged paper, dramatic chiaroscuro and an epic sense of scale. A troubadour in a patched costume tumbling across a wagon stage before a cheering village crowd. The whole image is monochrome ink except for one luminous spot color, warm amber, which appears only on the brightest light in the scene. Centered composition with a strong, readable silhouette against a softly vignetted paper background. The page is clean and unmarked apart from the illustration itself: it is purely pictorial, with no writing of any kind anywhere, no signature, no caption, no title and no labels."
+  },
+  {
+    "id": "recluse",
+    "kind": "backgrounds",
+    "tier": 1,
+    "aspect": "3:4",
+    "prompt": "A 19th-century wood-engraving illustration in the manner of Gustave Doré: dense, confident cross-hatching in black ink on warm aged paper, dramatic chiaroscuro and an epic sense of scale. A robed recluse tending herbs outside a tiny stone hut on a lonely mountainside at dawn. The whole image is monochrome ink except for one luminous spot color, warm amber, which appears only on the brightest light in the scene. Centered composition with a strong, readable silhouette against a softly vignetted paper background. The page is clean and unmarked apart from the illustration itself: it is purely pictorial, with no writing of any kind anywhere, no signature, no caption, no title and no labels."
+  },
+  {
+    "id": "village-champion",
+    "kind": "backgrounds",
+    "tier": 1,
+    "aspect": "3:4",
+    "prompt": "A 19th-century wood-engraving illustration in the manner of Gustave Doré: dense, confident cross-hatching in black ink on warm aged paper, dramatic chiaroscuro and an epic sense of scale. A young farmhand raising a pitchfork defiantly before a burning watchtower as villagers gather behind. The whole image is monochrome ink except for one luminous spot color, warm amber, which appears only on the brightest light in the scene. Centered composition with a strong, readable silhouette against a softly vignetted paper background. The page is clean and unmarked apart from the illustration itself: it is purely pictorial, with no writing of any kind anywhere, no signature, no caption, no title and no labels."
+  },
+  {
+    "id": "gutter-runner",
+    "kind": "backgrounds",
+    "tier": 1,
+    "aspect": "3:4",
+    "prompt": "A 19th-century wood-engraving illustration in the manner of Gustave Doré: dense, confident cross-hatching in black ink on warm aged paper, dramatic chiaroscuro and an epic sense of scale. A scrappy street kid darting through a crowded market alley clutching a stolen apple, a pet rat on one shoulder. The whole image is monochrome ink except for one luminous spot color, warm amber, which appears only on the brightest light in the scene. Centered composition with a strong, readable silhouette against a softly vignetted paper background. The page is clean and unmarked apart from the illustration itself: it is purely pictorial, with no writing of any kind anywhere, no signature, no caption, no title and no labels."
+  },
+  {
+    "id": "guild-crafter",
+    "kind": "backgrounds",
+    "tier": 1,
+    "aspect": "3:4",
+    "prompt": "A 19th-century wood-engraving illustration in the manner of Gustave Doré: dense, confident cross-hatching in black ink on warm aged paper, dramatic chiaroscuro and an epic sense of scale. A craftsperson in a leather apron inspecting a freshly forged blade in a busy guild workshop. The whole image is monochrome ink except for one luminous spot color, warm amber, which appears only on the brightest light in the scene. Centered composition with a strong, readable silhouette against a softly vignetted paper background. The page is clean and unmarked apart from the illustration itself: it is purely pictorial, with no writing of any kind anywhere, no signature, no caption, no title and no labels."
+  },
+  {
+    "id": "wildlander",
+    "kind": "backgrounds",
+    "tier": 1,
+    "aspect": "3:4",
+    "prompt": "A 19th-century wood-engraving illustration in the manner of Gustave Doré: dense, confident cross-hatching in black ink on warm aged paper, dramatic chiaroscuro and an epic sense of scale. A wildlander in furs striding across a windswept tundra with a staff, a hunting trap slung over one shoulder. The whole image is monochrome ink except for one luminous spot color, warm amber, which appears only on the brightest light in the scene. Centered composition with a strong, readable silhouette against a softly vignetted paper background. The page is clean and unmarked apart from the illustration itself: it is purely pictorial, with no writing of any kind anywhere, no signature, no caption, no title and no labels."
+  },
+  {
+    "id": "swindler",
+    "kind": "backgrounds",
+    "tier": 1,
+    "aspect": "3:4",
+    "prompt": "A 19th-century wood-engraving illustration in the manner of Gustave Doré: dense, confident cross-hatching in black ink on warm aged paper, dramatic chiaroscuro and an epic sense of scale. A smooth-talking swindler in a feathered hat selling bottled \"miracle tonics\" from a cart to a gullible crowd. The whole image is monochrome ink except for one luminous spot color, warm amber, which appears only on the brightest light in the scene. Centered composition with a strong, readable silhouette against a softly vignetted paper background. The page is clean and unmarked apart from the illustration itself: it is purely pictorial, with no writing of any kind anywhere, no signature, no caption, no title and no labels."
+  },
+  {
     "id": "club",
     "kind": "items",
     "tier": 1,

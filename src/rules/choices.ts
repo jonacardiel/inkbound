@@ -171,6 +171,9 @@ export function allChoices(character: Character, opts: Opts = {}): Choice[] {
   // Background
   const background = content.backgrounds.find(character.background);
   if (background?.languageOptions) out.push(fromSrd(`background:${background.index}:languageOptions`, background.languageOptions, 'background', 'chip', 1, 'Background languages'));
+  background?.proficiencyChoices?.forEach((pc, i) =>
+    out.push(fromSrd(`background:${background.index}:proficiencyChoices:${i}`, pc, 'background', 'chip', 1, pc.desc)),
+  );
   if (background && opts.includeEquipment) {
     background.startingEquipmentOptions.forEach((eo, i) => out.push(equipmentChoice(`background:${background.index}:startingEquipmentOptions:${i}`, eo)));
   }

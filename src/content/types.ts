@@ -141,10 +141,15 @@ export type Background = {
   index: string;
   name: string;
   startingProficiencies: string[];
+  /** Tool or instrument picks, e.g. "one gaming set". */
+  proficiencyChoices?: SrdChoice[];
   languageOptions?: SrdChoice;
   startingEquipment: Counted[];
   startingEquipmentOptions: SrdChoice[];
+  startingGold?: { quantity: number; unit: 'cp' | 'sp' | 'ep' | 'gp' | 'pp' };
   feature: { name: string; desc: string[] };
+  /** A feat granted by the background (SRD 5.2 backgrounds), when the app models it. */
+  originFeat?: string;
   personalityTraits: SrdChoice;
   ideals: SrdChoice;
   bonds: SrdChoice;

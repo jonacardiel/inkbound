@@ -131,6 +131,7 @@ export function derive(character: Character): Sheet {
     ...cls.proficiencies,
     ...[...traits].flatMap((t) => content.traits.find(t)?.proficiencies ?? []),
     ...(background?.startingProficiencies ?? []),
+    // Every proficiency pick: class and race skills, background tools, custom-background skills.
     ...chosen((k) => k.includes('proficiencyChoices') || k === 'feature:bonus-proficiencies:skills'),
     // Life domain: "you gain proficiency with heavy armor".
     ...(has('bonus-proficiency') ? ['heavy-armor'] : []),
@@ -205,7 +206,9 @@ export function derive(character: Character): Sheet {
 
   // --- Initiative and senses --------------------------------------------------------
   let initiative = mods.dex;
-  if (jackOfAllTrades) initiative += Math.floor(profBonus / 2);
+  // Alert (SRD 5.2 origin feat): add your proficiency bonus to Initiative.
+  if (background?.originFeat === 'alert') initiative += profBonus;
+  else if (jackOfAllTrades) initiative += Math.floor(profBonus / 2);
   else if (remarkableAthlete) initiative += Math.ceil(profBonus / 2);
   const passivePerception = 10 + skills['skill-perception'].bonus;
 

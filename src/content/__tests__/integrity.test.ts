@@ -29,7 +29,8 @@ describe('SRD content', () => {
     expect(content.subraces.all).toHaveLength(4);
     expect(content.classes.all.map((c) => c.index).sort()).toEqual(CLASSES);
     expect(content.subclasses.all).toHaveLength(12);
-    expect(content.backgrounds.all.map((b) => b.index)).toEqual(['acolyte']);
+    // SRD 5.1 has one background; the rest are adapted/original (see backgrounds.test.ts).
+    expect(content.backgrounds.all[0].index).toBe('acolyte');
     expect(content.spells.all.length).toBeGreaterThan(300);
   });
 

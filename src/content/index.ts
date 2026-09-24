@@ -21,6 +21,7 @@ import subclassesJson from './data/subclasses.json';
 import subracesJson from './data/subraces.json';
 import traitsJson from './data/traits.json';
 import weaponPropertiesJson from './data/weapon-properties.json';
+import { EXTRA_BACKGROUNDS } from './extraBackgrounds';
 import type {
   Background,
   CharClass,
@@ -69,7 +70,8 @@ function table<T extends { index: string }>(kind: string, rows: T[]): Table<T> {
 export const content = {
   abilityScores: table('ability score', as<Named & { fullName: string }>(abilityScoresJson)),
   alignments: table('alignment', as<Named & { abbreviation: string }>(alignmentsJson)),
-  backgrounds: table('background', as<Background>(backgroundsJson)),
+  // SRD 5.1's Acolyte, then the adapted SRD 5.2 and original backgrounds.
+  backgrounds: table('background', [...as<Background>(backgroundsJson), ...EXTRA_BACKGROUNDS]),
   classes: table('class', as<CharClass>(classesJson)),
   conditions: table('condition', as<Condition>(conditionsJson)),
   damageTypes: table('damage type', as<Named>(damageTypesJson)),
