@@ -43,7 +43,7 @@ describe('L1 Human Fighter', () => {
   });
 
   test('equipment choices keep their bundles and sub-picks', () => {
-    const equipment = pendingChoices(fighter, { includeEquipment: true }).filter((c) => c.step === 'equipment');
+    const equipment = pendingChoices(fighter, { includeEquipment: true }).filter((c) => c.id.startsWith('class:fighter:startingEquipment'));
     expect(equipment).toHaveLength(4);
     // (a) chain mail, or (b) leather armor + longbow + 20 arrows
     expect(equipment[0].options[0].items).toEqual([{ id: 'chain-mail', count: 1 }]);

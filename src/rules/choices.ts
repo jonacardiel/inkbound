@@ -51,6 +51,9 @@ export type Choice = {
 
 type Opts = { includeEquipment?: boolean };
 
+/** Background id for the app's custom background (not in the SRD). */
+export const CUSTOM_BACKGROUND = 'custom';
+
 // --- SRD choice -> app Choice -----------------------------------------------------
 
 function flattenOptions(option: SrdOption): ChoiceOption[] {
@@ -106,8 +109,13 @@ function fromSrd(id: string, srd: SrdChoice, step: CreatorStep, view: ChoiceView
   return { id, step, view, level, label: label ?? srd.desc ?? `Choose ${srd.choose}`, count: countOf(srd), options: optionsOf(srd) };
 }
 
-/** Equipment options keep their bundle structure: each option grants items and may unlock a sub-pick. */
+/**
+ * Equipment options keep their bundle structure: each option grants items and
+ * may unlock a sub-pick. A plain "choose from a category" choice lists the
+ * items directly instead.
+ */
 function equipmentChoice(id: string, srd: SrdChoice): Choice {
+  if (srd.from.kind !== 'options') return fromSrd(id, srd, 'equipment', 'itemCard', 1, srd.desc ?? 'Choose an item');
   const toOption = (o: SrdOption, i: number): ChoiceOption => {
     const items: { id: string; count: number }[] = [];
     const subChoices: Choice[] = [];
@@ -120,10 +128,7 @@ function equipmentChoice(id: string, srd: SrdChoice): Choice {
     visit(o, String(i));
     return { id: String(i), items, subChoices: subChoices.length ? subChoices : undefined };
   };
-  const options =
-    srd.from.kind === 'options'
-      ? srd.from.options.map(toOption)
-      : [{ id: '0', subChoices: [fromSrd(`${id}:0`, srd, 'equipment', 'itemCard', 1)] }];
+  const options = srd.from.options.map(toOption);
   return { id, step: 'equipment', view: 'itemCard', level: 1, label: srd.desc ?? 'Starting equipment', count: 1, options };
 }
 
@@ -155,6 +160,30 @@ export function allChoices(character: Character, opts: Opts = {}): Choice[] {
   // Background
   const background = content.backgrounds.find(character.background);
   if (background?.languageOptions) out.push(fromSrd(`background:${background.index}:languageOptions`, background.languageOptions, 'background', 'chip', 1, 'Background languages'));
+  if (background && opts.includeEquipment) {
+    background.startingEquipmentOptions.forEach((eo, i) => out.push(equipmentChoice(`background:${background.index}:startingEquipmentOptions:${i}`, eo)));
+  }
+  // The SRD has one background, so the app offers a custom one: any two skills and two languages.
+  if (character.background === CUSTOM_BACKGROUND) {
+    out.push({
+      id: 'background:custom:proficiencyChoices',
+      step: 'background',
+      view: 'tile',
+      level: 1,
+      label: 'Background skills',
+      count: 2,
+      options: content.skills.all.map((s) => ({ id: `skill-${s.index}` })),
+    });
+    out.push({
+      id: 'background:custom:languageOptions',
+      step: 'background',
+      view: 'chip',
+      level: 1,
+      label: 'Background languages',
+      count: 2,
+      options: content.languages.all.map((l) => ({ id: l.index })),
+    });
+  }
 
   if (!entry) return out;
   const cls = content.classes.get(entry.classId);

@@ -39,8 +39,9 @@ export default function RootLayout() {
           headerTitleStyle: { fontFamily: fonts.display },
           headerShadowVisible: false,
           contentStyle: { backgroundColor: palette.table },
-        }}
-      />
+        }}>
+        <Stack.Screen name="create" options={{ headerShown: false }} />
+      </Stack>
     </GestureHandlerRootView>
   );
 }

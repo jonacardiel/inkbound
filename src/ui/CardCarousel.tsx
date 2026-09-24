@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { scheduleOnRN } from 'react-native-worklets';
 import Animated, {
   Extrapolation,
   interpolate,
@@ -14,10 +15,12 @@ type Props<T> = {
   items: T[];
   keyOf: (item: T) => string;
   renderCard: (item: T, width: number) => ReactElement;
-  /** Called when a card settles in the center. */
+  /** Called when a different card becomes centered. */
   onFocus?: (item: T, index: number) => void;
   /** Card width as a share of the screen width. */
   widthRatio?: number;
+  /** Card to start centered on. */
+  initialIndex?: number;
 };
 
 const GAP = 14;
@@ -26,16 +29,26 @@ const GAP = 14;
  * Horizontal, snapping card carousel. The centered card is full size; its
  * neighbours shrink and dim slightly, which gives the swipe some depth.
  */
-export function CardCarousel<T>({ items, keyOf, renderCard, onFocus, widthRatio = 0.78 }: Props<T>) {
+export function CardCarousel<T>({ items, keyOf, renderCard, onFocus, widthRatio = 0.78, initialIndex = 0 }: Props<T>) {
   const { width: screen } = useWindowDimensions();
   const cardWidth = Math.min(420, Math.round(screen * widthRatio));
   const stride = cardWidth + GAP;
   const sidePadding = (screen - cardWidth) / 2;
-  const scrollX = useSharedValue(0);
+  const scrollX = useSharedValue(initialIndex * stride);
+  const centered = useSharedValue(initialIndex);
+  const reportFocus = (index: number) => {
+    if (items[index]) onFocus?.(items[index], index);
+  };
 
+  // Track the centered card from the scroll position (web has no momentum-end events).
   const onScroll = useAnimatedScrollHandler({
     onScroll: (e) => {
       scrollX.value = e.contentOffset.x;
+      const index = Math.round(e.contentOffset.x / stride);
+      if (index !== centered.value) {
+        centered.value = index;
+        scheduleOnRN(reportFocus, index);
+      }
     },
   });
 
@@ -46,15 +59,13 @@ export function CardCarousel<T>({ items, keyOf, renderCard, onFocus, widthRatio 
       keyExtractor={keyOf}
       showsHorizontalScrollIndicator={false}
       snapToInterval={stride}
+      initialScrollIndex={initialIndex}
+      getItemLayout={(_, index) => ({ length: stride, offset: stride * index, index })}
       decelerationRate="fast"
       contentContainerStyle={{ paddingHorizontal: sidePadding, paddingVertical: 12 }}
       ItemSeparatorComponent={() => <View style={{ width: GAP }} />}
       onScroll={onScroll}
       scrollEventThrottle={16}
-      onMomentumScrollEnd={(e) => {
-        const index = Math.round(e.nativeEvent.contentOffset.x / stride);
-        if (items[index]) onFocus?.(items[index], index);
-      }}
       renderItem={({ item, index }) => (
         <CarouselItem index={index} stride={stride} scrollX={scrollX}>
           {renderCard(item, cardWidth)}
