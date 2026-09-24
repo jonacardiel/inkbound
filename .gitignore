@@ -48,4 +48,4 @@ art/raw/
 art/bakeoff/*.png
 art/*.log
 art/*-sheet.jpg
-art/review.html
+art/review/
