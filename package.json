@@ -9,6 +9,7 @@
     "@gorhom/bottom-sheet": "^5.2.14",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@shopify/flash-list": "2.0.2",
+    "@shopify/react-native-skia": "2.6.2",
     "expo": "~57.0.24",
     "expo-blur": "~57.0.3",
     "expo-constants": "~57.0.19",
@@ -64,7 +65,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "test": "jest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "postinstall": "setup-skia-web public"
   },
   "private": true,
   "jest": {

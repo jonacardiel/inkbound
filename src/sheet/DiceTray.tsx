@@ -3,10 +3,16 @@ import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { Mode } from '@/rules/dice';
-import { useRolls } from '@/sheet/rolls';
+import { useDiceSettings, useRolls, type DiceAnimation } from '@/sheet/rolls';
 import { fonts, palettes, space } from '@/ui/theme';
 
 const DICE = [4, 6, 8, 10, 12, 20, 100];
+const ANIMATIONS: { id: DiceAnimation; label: string }[] = [
+  { id: 'full', label: '3D dice' },
+  { id: 'quick', label: 'Quick' },
+  { id: 'off', label: 'Off' },
+];
+
 const MODES: { id: Mode; label: string }[] = [
   { id: 'disadvantage', label: 'Disadv.' },
   { id: 'normal', label: 'Normal' },
@@ -17,7 +23,8 @@ const MODES: { id: Mode; label: string }[] = [
 export function DiceTray({ color }: { color: string }) {
   const [open, setOpen] = useState(false);
   const [count, setCount] = useState(1);
-  const { roll, mode, setMode, log } = useRolls();
+  const { roll, mode, setMode, log, forceNextD20, setForceNextD20 } = useRolls();
+  const { animation, setAnimation } = useDiceSettings();
   const insets = useSafeAreaInsets();
 
   return (
@@ -72,6 +79,36 @@ export function DiceTray({ color }: { color: string }) {
               </Pressable>
             ))}
           </View>
+
+          <Text style={styles.section}>Dice animation</Text>
+          <View style={styles.segment} accessibilityRole="radiogroup">
+            {ANIMATIONS.map((a) => (
+              <Pressable
+                key={a.id}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: animation === a.id }}
+                onPress={() => setAnimation(a.id)}
+                style={[styles.segmentItem, animation === a.id && { backgroundColor: color }]}>
+                <Text style={[styles.segmentText, { color: animation === a.id ? palettes.dark.table : palettes.dark.ink }]}>{a.label}</Text>
+              </Pressable>
+            ))}
+          </View>
+
+          {__DEV__ ? (
+            <View style={styles.countRow}>
+              <Text style={styles.hint}>Dev: force next d20</Text>
+              {[20, 1].map((face) => (
+                <Pressable
+                  key={face}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Force next d20 to ${face}`}
+                  onPress={() => setForceNextD20(forceNextD20 === face ? undefined : face)}
+                  style={[styles.count, forceNextD20 === face && { borderColor: color }]}>
+                  <Text style={styles.countText}>{face}</Text>
+                </Pressable>
+              ))}
+            </View>
+          ) : null}
 
           <Text style={styles.section}>Recent rolls</Text>
           <ScrollView style={{ maxHeight: 200 }}>

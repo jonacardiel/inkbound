@@ -49,3 +49,4 @@ art/bakeoff/*.png
 art/*.log
 art/*-sheet.jpg
 art/review/
+public/canvaskit.wasm

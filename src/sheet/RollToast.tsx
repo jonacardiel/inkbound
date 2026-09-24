@@ -4,7 +4,7 @@ import Animated, { FadeInDown, FadeOutDown, useReducedMotion } from 'react-nativ
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { RollResult } from '@/rules/dice';
-import { useRolls } from '@/sheet/rolls';
+import { useDiceSettings, useRolls } from '@/sheet/rolls';
 import { fonts, palettes, space } from '@/ui/theme';
 
 const TUMBLE_MS = 450;
@@ -52,7 +52,8 @@ export function RollToast({ color }: { color: string }) {
 }
 
 function Total({ result, color }: { result: RollResult; color: string }) {
-  const reduceMotion = useReducedMotion();
+  // No tumble with Reduce Motion, when the animation is off, or after the 3D stage already showed the roll.
+  const reduceMotion = useReducedMotion() || useDiceSettings.getState().animation !== 'quick';
   const max = result.dice.reduce((n, d) => n + d.sides * d.kept.length, result.modifier);
   const [shown, setShown] = useState(reduceMotion ? result.total : 1);
 

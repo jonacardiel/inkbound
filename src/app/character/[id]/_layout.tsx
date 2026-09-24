@@ -5,6 +5,7 @@ import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-n
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { content } from '@/content';
+import { RollStage } from '@/dice3d/RollStage';
 import { DiceTray } from '@/sheet/DiceTray';
 import { HpPanel } from '@/sheet/HpPanel';
 import { RollToast } from '@/sheet/RollToast';
@@ -105,6 +106,7 @@ export default function SheetLayout() {
       </View>
       <RollToast color={color} />
       <DiceTray color={color} />
+      <RollStage color={color} />
     </View>
   );
 }
