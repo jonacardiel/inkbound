@@ -1,0 +1,37 @@
+# Publishes an Android APK as a GitHub Release when a version tag is pushed.
+# The tag message holds the EAS build's download link on its first line and the
+# release notes after it; scripts/release-apk.ts creates such a tag.
+name: Release Android APK
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read the APK link and notes from the tag message
+        id: tag
+        run: |
+          git fetch --force origin "refs/tags/${GITHUB_REF_NAME}:refs/tags/${GITHUB_REF_NAME}"
+          git tag -l --format='%(contents)' "$GITHUB_REF_NAME" > message.txt
+          url=$(grep -oE '^https://expo\.dev/artifacts/eas/[A-Za-z0-9_-]+\.apk$' message.txt | head -1)
+          test -n "$url" || { echo "The tag message has no expo.dev APK link"; exit 1; }
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          grep -vE '^https://expo\.dev/' message.txt > notes.md || true
+
+      - name: Download the APK
+        env:
+          APK_URL: ${{ steps.tag.outputs.url }}
+        run: curl -fL --retry 3 -o Inkbound.apk "$APK_URL"
+
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" Inkbound.apk --title "Inkbound $GITHUB_REF_NAME" --notes-file notes.md --latest

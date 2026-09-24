@@ -48,6 +48,6 @@ npm install
 npx expo start
 ```
 
-Checks: `npx tsc --noEmit`, `npx expo lint`, `npx jest`. Android APK: `npx eas-cli@latest build -p android --profile preview`. The web version deploys to GitHub Pages from `main` via `.github/workflows/deploy-web.yml`.
+Checks: `npx tsc --noEmit`, `npx expo lint`, `npx jest`. Android APK: `npx eas-cli@latest build -p android --profile preview`, then `npx tsx scripts/release-apk.ts "what changed"` publishes that build as the latest GitHub Release. The web version deploys to GitHub Pages from `main` via `.github/workflows/deploy-web.yml`.
 
 </details>
