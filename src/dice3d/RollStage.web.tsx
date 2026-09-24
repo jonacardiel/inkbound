@@ -4,6 +4,8 @@ import { useReducedMotion } from 'react-native-reanimated';
 
 import { useRolls } from '@/sheet/rolls';
 
+import { StageBoundary } from './StageBoundary';
+
 /**
  * Web version: Skia's WebAssembly engine (public/canvaskit.wasm) is loaded the
  * first time a roll is staged, so it never slows down the rest of the app.
@@ -19,11 +21,12 @@ export function RollStage({ color }: { color: string }) {
 
   if (!staged || reduceMotion) return null;
   return (
-    <WithSkiaWeb
-      key={staged.at}
-      opts={{ locateFile: (file) => `/${file}` }}
-      getComponent={() => import('./RollStageCanvas')}
-      componentProps={{ roll: staged, color, onDone: finishStage }}
-    />
+    <StageBoundary key={staged.at} onFail={finishStage}>
+      <WithSkiaWeb
+        opts={{ locateFile: (file) => `/${file}` }}
+        getComponent={() => import('./RollStageCanvas')}
+        componentProps={{ roll: staged, color, onDone: finishStage }}
+      />
+    </StageBoundary>
   );
 }

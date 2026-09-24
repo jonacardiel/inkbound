@@ -4,6 +4,7 @@ import { useReducedMotion } from 'react-native-reanimated';
 import { useRolls } from '@/sheet/rolls';
 
 import RollStageCanvas from './RollStageCanvas';
+import { StageBoundary } from './StageBoundary';
 
 /** Plays staged rolls on the 3D dice stage (native). With Reduce Motion on, rolls go straight to the toast. */
 export function RollStage({ color }: { color: string }) {
@@ -16,5 +17,9 @@ export function RollStage({ color }: { color: string }) {
   }, [staged, reduceMotion, finishStage]);
 
   if (!staged || reduceMotion) return null;
-  return <RollStageCanvas key={staged.at} roll={staged} color={color} onDone={finishStage} />;
+  return (
+    <StageBoundary key={staged.at} onFail={finishStage}>
+      <RollStageCanvas roll={staged} color={color} onDone={finishStage} />
+    </StageBoundary>
+  );
 }
