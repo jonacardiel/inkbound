@@ -1,56 +1,53 @@
-# Welcome to your Expo app 👋
+<h1 align="center">Inkbound</h1>
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<p align="center">A D&amp;D 5e character creator and character sheet for your phone, illustrated like an old engraved storybook.<br>Works offline. Your heroes stay on your device.</p>
 
-## Get started
+<p align="center">
+  <a href="https://github.com/jonacardiel/inkbound/releases/latest/download/Inkbound.apk">
+    <img alt="Download for Android" src="https://img.shields.io/badge/Download%20for%20Android-APK-d4a24c?style=for-the-badge&logo=android&logoColor=white" height="64">
+  </a>
+  &nbsp;
+  <a href="https://jonacardiel.github.io/inkbound/">
+    <img alt="Open on iPhone" src="https://img.shields.io/badge/iPhone-Open%20in%20Safari-6b6b6b?style=for-the-badge&logo=apple&logoColor=white" height="64">
+  </a>
+</p>
 
-1. Install dependencies
+## Android: install
 
-   ```bash
-   npm install
-   ```
+1. Tap **Download for Android** above. The file is about 190 MB.
+2. Open the downloaded **Inkbound.apk** (from the notification or your Downloads folder).
+3. If your phone says it can't install apps from this source, tap **Settings**, turn on **Allow from this source**, then go back and tap **Install**.
+4. If Play Protect warns about an unknown app, tap **More details**, then **Install anyway**. It warns because the app isn't from the Play Store.
 
-2. Start the app
+To update, download and install again. Your heroes are kept.
 
-   ```bash
-   npx expo start
-   ```
+## iPhone: add to your Home Screen
 
-In the output, you'll find options to open the app in a
+1. Open **[jonacardiel.github.io/inkbound](https://jonacardiel.github.io/inkbound/)** in **Safari**.
+2. Tap the **Share** button, then **Add to Home Screen**.
+3. Open Inkbound from the new icon. After the first visit it works offline too.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## What's inside
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- A visual character creator: races, classes and backgrounds as illustrated cards.
+- A live character sheet: HP, AC, skills, attacks, spells, inventory and level-ups.
+- 3D dice with sounds.
+- Backups: save your heroes to a file and restore them on another device.
 
-## Get a fresh project
+---
 
-When you're ready, run:
+<sub>Rules content from the System Reference Documents 5.1 and 5.2 by Wizards of the Coast LLC, licensed under CC BY 4.0. Inkbound is an unofficial fan tool, not affiliated with or endorsed by Wizards of the Coast.</sub>
+
+<details>
+<summary>For developers</summary>
+
+Expo (React Native) app, TypeScript, routes in `src/app/`.
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Checks: `npx tsc --noEmit`, `npx expo lint`, `npx jest`. Android APK: `npx eas-cli@latest build -p android --profile preview`. The web version deploys to GitHub Pages from `main` via `.github/workflows/deploy-web.yml`.
 
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+</details>
